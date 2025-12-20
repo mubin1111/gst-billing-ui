@@ -121,6 +121,19 @@ export default function BankMaster() {
               />
             </div>
 
+             <div>
+              <label className="text-xs font-medium text-slate-600">
+                Branch Name
+              </label>
+              <input
+                name="branchName"
+                value={form.branchName}
+                onChange={handleChange}
+                className={`${inputBase} px-3 py-2`}
+                placeholder="Branch Name"
+              />
+            </div>
+
             <div>
               <label className="text-xs font-medium text-slate-600">
                 Account Holder Name *
