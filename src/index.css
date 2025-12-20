@@ -1,0 +1,63 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* define variable for tailwind v4 approach (optional) */
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+}
+
+/* Force test — temporary debug */
+body {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* dashboard diffrent color combination css  */
+@keyframes slideIn {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+
+/* main masters scrollbar css */
+
+/* SIDEBAR (drawer) — very thin black scrollbar, rounded thumb */
+.drawer-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;                 /* firefox */
+  scrollbar-color: #000000 transparent;  /* firefox */
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+.drawer-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px; /* horizontal if any */
+}
+.drawer-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.drawer-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.85);
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.03); /* subtle crisp edge */
+}
+
+/* MAIN AREA — hide visible scrollbar but keep scroll behavior */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE 10+ */
+  scrollbar-width: none;     /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;  /* Safari + Chrome */
+}
+
+/* optional: tiny padding on nav content so thumb never overlays content */
+.drawer-scrollbar > .px-3 {
+  padding-right: 6px;
+}
