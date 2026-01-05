@@ -276,6 +276,7 @@ const InvoicePage = () => {
                       />
                     </td>
 
+
                     {/* HSN */}
                     <td className="p-1 border-r border-slate-50">
                       <input
