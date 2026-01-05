@@ -90,24 +90,42 @@ export default function UnitMasterList() {
     else setSelectedRows((s) => Array.from(new Set([...s, ...visible])));
   };
 
-  /* ---------------- EXPORT ---------------- */
-  const getRowsForExport = (selectedOnly) => {
-    if (selectedOnly && selectedRows.length === 0) {
-      error("No units selected for export/print.");
-      return [];
-    }
-    return selectedOnly
-      ? units.filter((u) => selectedRows.includes(u.UnitCode))
-      : units;
-  };
-
+  /* ---------------- EXPORT LOGIC ---------------- */
   const exportColumns = [
     { key: "UnitCode", header: "Unit Code" },
     { key: "UnitName", header: "Unit Name" },
     { key: "UnitSymbol", header: "Unit Symbol" },
     { key: "DecimalAllowed", header: "Decimal Allowed" },
-    { key: "IsBaseUnit", header: "Is Base Unit" },
+    { key: "IsBaseUnit", header: "Base Unit" },
   ];
+
+  const handleExport = (type) => {
+    const sourceData = onlySelectedExport
+      ? units.filter((u) => selectedRows.includes(u.UnitCode))
+      : filtered;
+
+    if (sourceData.length === 0) {
+      error(onlySelectedExport ? "No units selected for export." : "No data available.");
+      return;
+    }
+
+    // Format data for export (e.g., converting boolean to YES/NO)
+    const formattedData = sourceData.map(u => ({
+      ...u,
+      IsBaseUnit: u.IsBaseUnit ? "YES" : "NO"
+    }));
+
+    const config = {
+      fileName: "Unit_Master_List",
+      title: "Item Unit Report",
+      columns: exportColumns,
+      rows: formattedData,
+    };
+
+    if (type === "excel") exportExcel(config);
+    if (type === "pdf") exportPDF(config);
+    if (type === "print") printTable(config);
+  };
 
   /* ---------------- RENDER ---------------- */
   return (
@@ -119,7 +137,7 @@ export default function UnitMasterList() {
         </h1>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2 border w-80">
+          <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2 border w-full sm:w-80">
             <Search className="w-5 h-5 text-slate-400" />
             <input
               value={query}
@@ -134,7 +152,7 @@ export default function UnitMasterList() {
 
           <Link
             to="/unit-master"
-            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700"
+            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors justify-center"
           >
             <Plus className="w-4 h-4" /> Add Unit
           </Link>
@@ -142,36 +160,45 @@ export default function UnitMasterList() {
       </div>
 
       {/* EXPORT BAR */}
-      <div className="flex justify-between items-center mb-5 p-3 bg-slate-50 border rounded-lg">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-5 p-3 bg-slate-50 border rounded-lg">
         <div className="flex items-center gap-3 text-sm text-slate-600">
           <span className="font-semibold">{selectedRows.length} selected</span>
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={onlySelectedExport}
               onChange={(e) => setOnlySelectedExport(e.target.checked)}
-              className="w-4 h-4"
+              className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
             Export selected only
           </label>
         </div>
 
         <div className="flex gap-2">
-          <button className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm flex gap-2">
+          <button 
+            onClick={() => handleExport("excel")}
+            className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-green-700 transition-colors"
+          >
             <FileSpreadsheet className="w-4 h-4" /> Excel
           </button>
-          <button className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm flex gap-2">
+          <button 
+            onClick={() => handleExport("pdf")}
+            className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-red-700 transition-colors"
+          >
             <FileText className="w-4 h-4" /> PDF
           </button>
-          <button className="px-3 py-2 bg-slate-700 text-white rounded-lg text-sm flex gap-2">
+          <button 
+            onClick={() => handleExport("print")}
+            className="px-3 py-2 bg-slate-700 text-white rounded-lg text-sm flex items-center gap-2 hover:bg-slate-800 transition-colors"
+          >
             <Printer className="w-4 h-4" /> Print
           </button>
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto border rounded-xl">
-        <table className="min-w-full text-sm hidden md:table">
+      <div className="overflow-x-auto border rounded-xl shadow-sm">
+        <table className="min-w-full text-sm">
           <thead className="bg-gray-900 text-white">
             <tr>
               <th className="px-4 py-3 w-10 text-center">
@@ -182,6 +209,7 @@ export default function UnitMasterList() {
                     pageItems.every((u) => selectedRows.includes(u.UnitCode))
                   }
                   onChange={toggleAll}
+                  className="rounded border-gray-300"
                 />
               </th>
               <th className="px-4 py-3 text-left w-28">Unit Code</th>
@@ -194,59 +222,56 @@ export default function UnitMasterList() {
           </thead>
 
           <tbody>
-            {pageItems.map((u) => {
-              const selected = selectedRows.includes(u.UnitCode);
-              return (
-                <tr
-                  key={u.UnitCode}
-                  className={`border-b ${
-                    selected ? "bg-indigo-100/50" : "hover:bg-slate-50"
-                  }`}
-                >
-                  <td className="px-4 py-3 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selected}
-                      onChange={() => toggleRow(u.UnitCode)}
-                    />
-                  </td>
-
-                  <td className="px-4 py-3 font-mono text-xs text-left">
-                    {u.UnitCode}
-                  </td>
-
-                  <td className="px-4 py-3 font-medium text-left">
-                    {u.UnitName}
-                  </td>
-
-                  <td className="px-4 py-3 text-left">
-                    {u.UnitSymbol}
-                  </td>
-
-                  <td className="px-4 py-3 text-center">
-                    {u.DecimalAllowed}
-                  </td>
-
-                  <td className="px-4 py-3 text-center font-semibold">
-                    {u.IsBaseUnit ? "YES" : "NO"}
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <div className="flex justify-center gap-1">
-                      <button className="p-2 rounded-full hover:bg-slate-200">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 rounded-full hover:bg-slate-200 text-sky-600">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 rounded-full hover:bg-slate-200 text-rose-600">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {pageItems.length > 0 ? (
+              pageItems.map((u) => {
+                const selected = selectedRows.includes(u.UnitCode);
+                return (
+                  <tr
+                    key={u.UnitCode}
+                    className={`border-b transition-colors ${
+                      selected ? "bg-indigo-50" : "hover:bg-slate-50"
+                    }`}
+                  >
+                    <td className="px-4 py-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleRow(u.UnitCode)}
+                        className="rounded border-gray-300"
+                      />
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-left">{u.UnitCode}</td>
+                    <td className="px-4 py-3 font-medium text-left text-slate-700">{u.UnitName}</td>
+                    <td className="px-4 py-3 text-left text-slate-600">{u.UnitSymbol}</td>
+                    <td className="px-4 py-3 text-center text-slate-600">{u.DecimalAllowed}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`px-2 py-1 rounded-md text-[10px] font-bold ${u.IsBaseUnit ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                        {u.IsBaseUnit ? "YES" : "NO"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-center gap-1">
+                        <button onClick={() => onView(u)} className="p-2 rounded-full hover:bg-slate-200 transition-colors" title="View">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => onEdit(u)} className="p-2 rounded-full hover:bg-slate-200 text-sky-600 transition-colors" title="Edit">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => onDelete(u)} className="p-2 rounded-full hover:bg-slate-200 text-rose-600 transition-colors" title="Delete">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="7" className="text-center py-10 text-slate-400 italic">
+                  No units found matching your search.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

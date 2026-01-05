@@ -61,6 +61,9 @@ import StateMasterList from "./components/masterslist/StateMasterList"
 import TermsAndConditionMasterList from "./components/masterslist/TermsAndConditionMasterList";
 import CountryMasterList from "./components/masterslist/CountryMasterList";
 
+
+// Invoces
+
 // Purchase List
 import AssetPurchase from "./components/purchase/AssetPurchase";
 import PurchaseReturn from "./components/purchase/PurchaseReturn";

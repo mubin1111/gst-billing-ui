@@ -1,268 +1,150 @@
-// src/pages/AdvancedLoginLightEnhanced.jsx
-import React, { useState } from "react";
-import {
-  FiMail,
-  FiLock,
-  FiEye,
-  FiEyeOff,
-  FiCheckCircle,
-  FiLogIn,
-  FiUser 
-} from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import LoginImage from "../assets/LoginImage.png";
+import React, { useState } from 'react';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiCheckCircle, FiShield } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
-const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-
-export default function AdvancedLoginLightEnhanced() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    unit: "", // <-- added unit
-    email: "",
-    password: "",
-    remember: false,
-  });
+const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
   const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState({ type: "", message: "" });
+  const navigate = useNavigate();
 
-  // Example units list — replace with API data if needed
-  const units = [
-    { id: "u1", name: "ABC Enterprises Pvt. Ltd." },
-    { id: "u2", name: "XYZ Solutions & Services" },
-    { id: "u3", name: "Global Imports Co." },
-  ];
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFeedback({ type: "", message: "" });
-    setForm((s) => ({ ...s, [name]: type === "checkbox" ? checked : value }));
-  };
-
-  const simulateLogin = async () => {
-    await new Promise((res) => setTimeout(res, 900));
-    return (
-      form.email === "test@example.com" &&
-      form.password === "password123"
-    );
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setFeedback({ type: "", message: "" });
-
-    // Validate unit selection
-    if (!form.unit) {
-      setFeedback({ type: "error", message: "Please select a Unit." });
-      return;
-    }
-
-    if (!form.email || !form.password) {
-      setFeedback({
-        type: "error",
-        message: "Please enter both email and password.",
-      });
-      return;
-    }
-    if (!validateEmail(form.email)) {
-      setFeedback({
-        type: "error",
-        message: "Please enter a valid email address.",
-      });
-      return;
-    }
-    if (form.password.length < 6) {
-      setFeedback({
-        type: "error",
-        message: "Password must be at least 6 characters.",
-      });
-      return;
-    }
-
     setIsLoading(true);
-
-    try {
-      const ok = await simulateLogin();
-      if (ok) {
-        setFeedback({
-          type: "success",
-          message: "Login successful — redirecting...",
-        });
-        if (form.remember) localStorage.setItem("remember_email", form.email);
-        // you can send form.unit along with credentials to backend
-        console.log("Selected unit:", form.unit);
-        setTimeout(() => navigate("/"), 700);
-      } else {
-        setFeedback({
-          type: "error",
-          message:
-            "Invalid credentials. Try test@example.com / password123",
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      setFeedback({
-        type: "error",
-        message: "Server error — please try again later.",
-      });
-    } finally {
+    // Simulate API Call
+    setTimeout(() => {
       setIsLoading(false);
-    }
+      navigate('/dashboard');
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-
-      {/* 🔥 Blue + Teal Glow Background (Option C) */}
-      <div className="absolute inset-0 -z-10">
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 25% 20%, rgba(17, 0, 255, 0.22), transparent 45%), \
-               radial-gradient(circle at 80% 70%, rgba(13, 17, 11, 0.18), transparent 50%), \
-               linear-gradient(to bottom right, #ffffffff, #0099ffff)"
-          }}
-        />
-
-        {/* Subtle rupee watermark */}
-        <svg
-          className="absolute inset-0 w-full h-full opacity-[0.04]"
-          viewBox="0 0 400 400"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern id="rupattern" width="60" height="60" patternUnits="userSpaceOnUse">
-              <text
-                x="6"
-                y="44"
-                fontSize="44"
-                fill="rgba(15,23,42,0.05)"
-                fontWeight="700"
-              >
-                ₹
-              </text>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#rupattern)" />
-        </svg>
+    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-4 font-sans">
+      {/* Background Decorative Elements */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-sky-100 rounded-full blur-[120px] opacity-60"></div>
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-100 rounded-full blur-[120px] opacity-60"></div>
       </div>
 
-      {/* MAIN PAGE LAYOUT — Image & Form are now SEPARATE */}
-      <div className="relative z-10 w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-10 items-center px-6">
-
-        {/* LEFT — IMAGE ONLY (separate & clean) */}
-        <div className="flex justify-center md:justify-end">
-  <img
-    src={LoginImage}
-    alt="GST Illustration"
-    className="w-full max-w-[1000px] object-contain"
-    style={{ background: "transparent" }}
-  />
-</div>
-
-
-        {/* RIGHT — LOGIN FORM CARD */}
-        <div className="bg-white shadow-2xl rounded-3xl p-8 md:p-10 max-w-lg w-full mx-auto border border-slate-100">
-
-          {/* HEADER */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center bg-indigo-50 rounded-full p-3 mb-4">
-              <FiCheckCircle className="w-8 h-8 text-indigo-600" />
-            </div>
-            <h1 className="text-2xl font-extrabold text-slate-800">
-              Welcome back
+      <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[32px] shadow-2xl shadow-slate-200/60 overflow-hidden border border-slate-100">
+        
+        {/* LEFT SIDE: Brand/Marketing */}
+        <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-slate-900 via-indigo-950 to-sky-900 text-white relative">
+          <div className="z-10">
+            <div className="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg mb-8">G</div>
+            <h1 className="text-4xl font-bold leading-tight mb-4 text-white">
+              The Intelligent <br /> 
+              <span className="text-sky-400 font-extrabold underline decoration-sky-500/30 underline-offset-8">GST Solution</span>
             </h1>
+            <p className="text-slate-300 text-lg max-w-sm">
+              Simplifying compliance, billing, and financial reporting for modern enterprises.
+            </p>
           </div>
 
-          {/* FORM */}
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-
-           
-
-            {/* EMAIL */}
-            <label className="block">
-              <span className="text-sm font-semibold text-slate-700">User ID</span>
-              <div className="mt-1.5 relative">
-                <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 text-lg">
-                  <FiUser />
-                </span>
-                <input
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-800 text-lg"
-                />
+          <div className="z-10 space-y-6">
+            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                <FiCheckCircle size={20} />
               </div>
-            </label>
-
-            {/* PASSWORD */}
-            <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Password</span>
-              <div className="mt-1.5 relative">
-                <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 text-lg">
-                  <FiLock />
-                </span>
-                <input
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-14 py-3 bg-white border border-slate-300 rounded-xl text-slate-800 text-lg"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-600"
-                >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button>
+              <p className="text-sm text-slate-200">Real-time GSTR-1 & 3B Auto-generation</p>
+            </div>
+            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+                <FiShield size={20} />
               </div>
-            </label>
-
-             {/* UNIT SELECT */}
-            <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Select Unit</span>
-              <div className="mt-1.5 relative">
-                <select
-                  name="unit"
-                  value={form.unit}
-                  onChange={handleChange}
-                  className="w-full appearance-none pl-3 pr-10 py-3 bg-white border border-slate-300 rounded-xl text-slate-800 text-lg"
-                >
-                  <option value="">-- Choose Unit --</option>
-                  {units.map((u) => (
-                    <option key={u.id} value={u.id}>{u.name}</option>
-                  ))}
-                </select>
-                {/* small chevron could be added if desired */}
-              </div>
-            </label>
-
-            {/* CTA BUTTON */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3.5 rounded-xl font-semibold bg-gradient-to-r from-indigo-600 to-teal-500 text-white hover:from-indigo-700 hover:to-teal-600 shadow-lg flex items-center justify-center gap-3 text-lg"
-            >
-              {isLoading ? (
-                "Loading..."
-              ) : (
-                <>
-                  <FiLogIn className="text-xl" /> Log in
-                </>
-              )}
-            </button>
-
-          </form>
-
+              <p className="text-sm text-slate-200">ISO 27001 Certified Data Encryption</p>
+            </div>
+          </div>
+          
+          {/* Subtle Grid Pattern Overlay */}
+          <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
         </div>
 
+        {/* RIGHT SIDE: Login Form */}
+        <div className="p-8 lg:p-16 flex flex-col justify-center">
+          <div className="max-w-sm mx-auto w-full">
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h2>
+              <p className="text-slate-500 font-medium">Please enter your credentials to access the console</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email Input */}
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                <div className="relative group">
+                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-600 transition-colors" />
+                  <input 
+                    type="email" 
+                    required
+                    placeholder="name@company.com"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-4 focus:ring-sky-100 focus:border-sky-500 transition-all font-medium"
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Password Input */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center px-1">
+                  <label className="text-sm font-bold text-slate-700">Password</label>
+                  <a href="#" className="text-xs font-bold text-sky-600 hover:text-sky-700">Forgot Password?</a>
+                </div>
+                <div className="relative group">
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-600 transition-colors" />
+                  <input 
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-12 outline-none focus:ring-4 focus:ring-sky-100 focus:border-sky-500 transition-all font-medium"
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <label className="flex items-center gap-3 cursor-pointer group w-fit">
+                <div className="relative">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer"
+                    onChange={(e) => setFormData({...formData, rememberMe: e.target.checked})}
+                  />
+                  <div className="w-5 h-5 border-2 border-slate-300 rounded-md peer-checked:bg-sky-500 peer-checked:border-sky-500 transition-all"></div>
+                  <FiCheckCircle className="absolute inset-0 text-white opacity-0 peer-checked:opacity-100 transition-opacity scale-75" />
+                </div>
+                <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">Keep me signed in</span>
+              </label>
+
+              {/* Submit Button */}
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-3"
+              >
+                {isLoading ? (
+                  <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  "Sign In to Account"
+                )}
+              </button>
+            </form>
+
+            <p className="mt-8 text-center text-sm font-medium text-slate-500">
+              Don't have an account? <a href="#" className="text-sky-600 font-bold hover:underline">Request Access</a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;

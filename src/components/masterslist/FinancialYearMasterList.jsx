@@ -74,14 +74,44 @@ export default function FinancialYearList() {
     setSelectedRows(allSelected ? [] : visible);
   };
 
+  /* --- EXPORT LOGIC --- */
   const exportColumns = [
     { key: "FinancialYearName", header: "Financial Year" },
     { key: "FromDate", header: "From Date" },
     { key: "ToDate", header: "To Date" },
     { key: "AssessmentYear", header: "Assessment Year" },
-    { key: "IsCurrentYear", header: "Current Year" },
-    { key: "IsLocked", header: "Locked" },
+    { key: "IsCurrentYearDisplay", header: "Current Year" },
+    { key: "IsLockedDisplay", header: "Locked" },
   ];
+
+  const handleExport = (type) => {
+    const sourceData = onlySelectedExport
+      ? financialYears.filter((f) => selectedRows.includes(f.FinancialYearName))
+      : filtered;
+
+    if (sourceData.length === 0) {
+      error("No data available to export.");
+      return;
+    }
+
+    // Format boolean values for display in files
+    const formattedData = sourceData.map((f) => ({
+      ...f,
+      IsCurrentYearDisplay: f.IsCurrentYear ? "Yes" : "No",
+      IsLockedDisplay: f.IsLocked ? "Yes" : "No",
+    }));
+
+    const config = {
+      fileName: `Financial_Year_List`,
+      title: "Financial Year Master Report",
+      columns: exportColumns,
+      rows: formattedData,
+    };
+
+    if (type === "excel") exportExcel(config);
+    if (type === "pdf") exportPDF(config);
+    if (type === "print") printTable(config);
+  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-2xl border">
@@ -124,15 +154,24 @@ export default function FinancialYearList() {
         </label>
 
         <div className="flex items-center gap-2">
-          <button className="px-3 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2 text-sm">
+          <button
+            onClick={() => handleExport("excel")}
+            className="px-3 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2 text-sm"
+          >
             <FileSpreadsheet className="w-4 h-4" /> Excel
           </button>
 
-          <button className="px-3 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2 text-sm">
+          <button
+            onClick={() => handleExport("pdf")}
+            className="px-3 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2 text-sm"
+          >
             <FileText className="w-4 h-4" /> PDF
           </button>
 
-          <button className="px-3 py-2 bg-slate-700 text-white rounded-lg flex items-center gap-2 text-sm">
+          <button
+            onClick={() => handleExport("print")}
+            className="px-3 py-2 bg-slate-700 text-white rounded-lg flex items-center gap-2 text-sm"
+          >
             <Printer className="w-4 h-4" /> Print
           </button>
         </div>
@@ -144,7 +183,16 @@ export default function FinancialYearList() {
           <thead className="bg-gray-900 text-white">
             <tr>
               <th className="w-10 px-3 py-3 text-center">
-                <input type="checkbox" onChange={toggleAll} />
+                <input
+                  type="checkbox"
+                  onChange={toggleAll}
+                  checked={
+                    pageItems.length > 0 &&
+                    pageItems.every((v) =>
+                      selectedRows.includes(v.FinancialYearName)
+                    )
+                  }
+                />
               </th>
               <th className="px-4 py-3 text-left">Financial Year</th>
               <th className="px-4 py-3 text-left">From</th>
@@ -160,7 +208,11 @@ export default function FinancialYearList() {
             {pageItems.map((f) => (
               <tr
                 key={f.FinancialYearName}
-                className="border-b hover:bg-slate-50"
+                className={`border-b hover:bg-slate-50 ${
+                  selectedRows.includes(f.FinancialYearName)
+                    ? "bg-indigo-50/50"
+                    : ""
+                }`}
               >
                 <td className="px-3 py-2 text-center">
                   <input
@@ -186,9 +238,18 @@ export default function FinancialYearList() {
 
                 <td className="px-4 py-2">
                   <div className="flex items-center justify-center gap-2">
-                    <Eye className="w-4 h-4 cursor-pointer" />
-                    <Edit className="w-4 h-4 text-sky-600 cursor-pointer" />
-                    <Trash2 className="w-4 h-4 text-rose-600 cursor-pointer" />
+                    <Eye
+                      className="w-4 h-4 cursor-pointer"
+                      onClick={() => onView(f)}
+                    />
+                    <Edit
+                      className="w-4 h-4 text-sky-600 cursor-pointer"
+                      onClick={() => onEdit(f)}
+                    />
+                    <Trash2
+                      className="w-4 h-4 text-rose-600 cursor-pointer"
+                      onClick={() => onDelete(f)}
+                    />
                   </div>
                 </td>
               </tr>

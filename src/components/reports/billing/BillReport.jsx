@@ -7,10 +7,17 @@ import {
   Printer,
   ChevronLeft,
   ChevronRight,
-  CreditCard,
 } from "lucide-react";
 
+// Import your global context hooks
+import { useToast } from "../../contextapi/ToastContext";
+import { useExport } from "../../contextapi/ExportContext";
+
 export default function BillingReport() {
+  /* ---------------- HOOKS ---------------- */
+  const { error, info } = useToast();
+  const { exportExcel, exportPDF, printTable } = useExport();
+
   /* ---------------- DATE HELPERS ---------------- */
   const getTodayISODate = () => new Date().toISOString().split("T")[0];
 
@@ -40,18 +47,19 @@ export default function BillingReport() {
     []
   );
 
-  /* ---------------- BILLING CALCULATION ---------------- */
+  /* ---------------- FILTERING & CALCULATION ---------------- */
   const billingData = useMemo(() => {
     return rawData
       .filter((item) => {
         const matchStatus = filters.status === "All" || item.status === filters.status;
         const matchMode = filters.paymentMode === "All" || item.mode === filters.paymentMode;
+        // Note: Real apps would also filter by date range here
         return matchStatus && matchMode;
       })
-      .map((item) => {
-        const netAmount = item.amount - item.discount + item.tax;
-        return { ...item, netAmount };
-      });
+      .map((item) => ({
+        ...item,
+        netAmount: item.amount - item.discount + item.tax,
+      }));
   }, [rawData, filters]);
 
   /* ---------------- PAGINATION ---------------- */
@@ -64,6 +72,39 @@ export default function BillingReport() {
   const handleReset = () => {
     setFilters(initialFilters);
     setCurrentPage(1);
+  };
+
+  /* ---------------- EXPORT HANDLER ---------------- */
+  const handleExport = (type) => {
+    if (billingData.length === 0) {
+      error("No data available to export.");
+      return;
+    }
+
+    const config = {
+      fileName: `Billing_Report_${filters.fromDate}_to_${filters.toDate}`,
+      title: `Billing Report (${filters.unit})`,
+      columns: [
+        { key: "billNo", header: "Bill No" },
+        { key: "date", header: "Date" },
+        { key: "customer", header: "Customer Name" },
+        { key: "type", header: "Category" },
+        { key: "amount", header: "Gross Amt" },
+        { key: "discount", header: "Discount" },
+        { key: "tax", header: "Tax" },
+        { key: "netAmount", header: "Net Amount" },
+        { key: "status", header: "Status" },
+        { key: "mode", header: "Mode" },
+      ],
+      rows: billingData,
+    };
+
+    if (type === "excel") exportExcel(config);
+    else if (type === "pdf") exportPDF(config);
+    else if (type === "print") {
+      printTable(config);
+      info("Preparing print view...");
+    }
   };
 
   /* ---------------- STYLES ---------------- */
@@ -151,10 +192,22 @@ export default function BillingReport() {
             </div>
 
             <div className="flex gap-2 w-full md:w-auto justify-end">
-              <button className="flex-1 md:flex-none h-11 px-4 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+              <button 
+                onClick={() => handleExport("excel")}
+                className="flex-1 md:flex-none h-11 px-4 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+              >
                 <FileSpreadsheet className="w-4 h-4 text-emerald-600" /> Excel
               </button>
-              <button className="flex-1 md:flex-none h-11 px-4 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition-all flex items-center justify-center gap-2">
+              <button 
+                onClick={() => handleExport("pdf")}
+                className="flex-1 md:flex-none h-11 px-4 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+              >
+                <FileText className="w-4 h-4 text-rose-600" /> PDF
+              </button>
+              <button 
+                onClick={() => handleExport("print")}
+                className="flex-1 md:flex-none h-11 px-4 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition-all flex items-center justify-center gap-2"
+              >
                 <Printer className="w-4 h-4" /> Print
               </button>
             </div>

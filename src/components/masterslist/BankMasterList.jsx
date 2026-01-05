@@ -145,15 +145,7 @@ export default function BankMasterList() {
 
       {/* EXPORT */}
       <div className="flex justify-between items-center mb-4 bg-slate-50 p-3 rounded-lg border">
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={onlySelectedExport}
-            onChange={(e) => setOnlySelectedExport(e.target.checked)}
-            className="w-4 h-4"
-          />
-          Export selected only
-        </label>
+       
 
         <div className="flex gap-2">
           <button

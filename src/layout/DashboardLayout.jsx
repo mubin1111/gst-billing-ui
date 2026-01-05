@@ -1,7 +1,6 @@
 // src/layout/DashboardLayout.jsx
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-
 /* ---------------- react-icons imports ---------------- */
 import { FiHome, FiFileText, FiSettings, FiSearch, FiChevronDown, FiChevronRight, FiChevronLeft, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { IoIosArrowForward, IoMdArrowRoundForward } from "react-icons/io";
@@ -33,6 +32,7 @@ const ICON_MAP = {
   Transaction:GrTransaction,
   Masters: RiMastercardLine
 };
+
 
 /* ---------------- initialMenu (same as before) ---------------- */
 const initialMenu = [

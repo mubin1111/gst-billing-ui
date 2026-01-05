@@ -1,18 +1,14 @@
 // src/pages/EmployeeMasterList.jsx
 import React, { useMemo, useState } from "react";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { FileSpreadsheet, FileText, Printer } from "lucide-react";
 
-/**
- * EmployeeMasterList
- * - Expects an `employees` array (if not provided uses sample data)
- * - Shows columns: EmployeeID, FirstName, LastName, Gender, DateOfBirth,
- *   JoiningDate, DepartmentID, DesignationID, MobileNo, EmailID,
- *   Address, City, State, Country, PostalCode
- */
+import { useExport } from "../contextapi/ExportContext";
+
 export default function EmployeeMasterList({ employees: incoming }) {
-  // sample data fallback (replace with API / props)
+
+  const { exportExcel, exportPDF, printTable } = useExport();
+
+  /* ---------------- SAMPLE DATA (API replace karega) ---------------- */
   const sample = useMemo(
     () => [
       {
@@ -53,192 +49,222 @@ export default function EmployeeMasterList({ employees: incoming }) {
     []
   );
 
-  const employees = incoming && incoming.length ? incoming : sample;
+  const employees = incoming?.length ? incoming : sample;
 
+  /* ---------------- STATE ---------------- */
   const [query, setQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [perPage] = useState(10);
+  const [onlySelectedExport, setOnlySelectedExport] = useState(false);
   const [page, setPage] = useState(1);
+  const perPage = 10;
 
-  // simple filter
+  /* ---------------- FILTER ---------------- */
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return employees;
     return employees.filter((e) =>
-      [
-        e.EmployeeID,
-        e.FirstName,
-        e.LastName,
-        e.MobileNo,
-        e.EmailID,
-        e.City,
-        e.State,
-        e.DepartmentID,
-        e.DesignationID,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(q)
+      Object.values(e).join(" ").toLowerCase().includes(q)
     );
   }, [employees, query]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const pageItems = filtered.slice((page - 1) * perPage, page * perPage);
 
-  const toggleRow = (id) =>
-    setSelectedRows((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  /* ---------------- SELECTION ---------------- */
+  const toggleRow = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id]
+    );
+  };
 
   const toggleAll = () => {
-    const visibleIds = pageItems.map((r) => r.EmployeeID);
-    const allSelected = visibleIds.every((id) => selectedRows.includes(id));
-    if (allSelected) setSelectedRows((s) => s.filter((id) => !visibleIds.includes(id)));
-    else setSelectedRows((s) => Array.from(new Set([...s, ...visibleIds])));
+    const ids = pageItems.map((r) => r.EmployeeID);
+    const allSelected = ids.every((id) => selectedRows.includes(id));
+
+    setSelectedRows(
+      allSelected
+        ? selectedRows.filter((id) => !ids.includes(id))
+        : [...new Set([...selectedRows, ...ids])]
+    );
   };
 
-  const exportExcel = (selectedOnly = false) => {
-    const src = selectedOnly && selectedRows.length ? employees.filter((e) => selectedRows.includes(e.EmployeeID)) : employees;
-    if (!src.length) return alert("No rows to export");
-    const worksheet = XLSX.utils.json_to_sheet(src);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, worksheet, "Employees");
-    XLSX.writeFile(wb, "Employees.xlsx");
-  };
+  /* ---------------- EXPORT CONFIG (🔥 FIXED) ---------------- */
+  const exportColumns = [
+    { header: "Employee ID", key: "EmployeeID" },
+    { header: "First Name", key: "FirstName" },
+    { header: "Last Name", key: "LastName" },
+    { header: "Gender", key: "Gender" },
+    { header: "DOB", key: "DateOfBirth" },
+    { header: "Joining Date", key: "JoiningDate" },
+    { header: "Department", key: "DepartmentID" },
+    { header: "Designation", key: "DesignationID" },
+    { header: "Mobile", key: "MobileNo" },
+    { header: "Email", key: "EmailID" },
+    { header: "Address", key: "Address" },
+    { header: "City", key: "City" },
+    { header: "State", key: "State" },
+    { header: "Country", key: "Country" },
+    { header: "Postal Code", key: "PostalCode" },
+  ];
 
-  const exportPDF = (selectedOnly = false) => {
-    const src = selectedOnly && selectedRows.length ? employees.filter((e) => selectedRows.includes(e.EmployeeID)) : employees;
-    if (!src.length) return alert("No rows to export");
-    const doc = new jsPDF();
-    const head = [
-      [
-        "Emp ID",
-        "Name",
-        "Gender",
-        "DOB",
-        "Joining",
-        "Dept",
-        "Designation",
-        "Mobile",
-        "Email",
-        "City",
-        "State",
-        "Postal"
-      ],
-    ];
-    const body = src.map((e) => [
-      e.EmployeeID,
-      `${e.FirstName} ${e.LastName}`,
-      e.Gender,
-      e.DateOfBirth,
-      e.JoiningDate,
-      e.DepartmentID,
-      e.DesignationID,
-      e.MobileNo,
-      e.EmailID,
-      e.City,
-      e.State,
-      e.PostalCode,
-    ]);
-    doc.autoTable({ startY: 14, head, body, styles: { fontSize: 8 } });
-    doc.save("Employees.pdf");
-  };
+  /* ✅ VERY IMPORTANT FUNCTION (missing earlier) */
+  const getRowsForExport = (onlySelected) =>
+    onlySelected
+      ? filtered.filter((e) => selectedRows.includes(e.EmployeeID))
+      : filtered;
 
+  /* ---------------- UI ---------------- */
   return (
     <div className="bg-white p-6 rounded-xl shadow-md border border-slate-100">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h2 className="text-xl font-bold text-slate-700">Employee Master</h2>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <h2 className="text-xl font-bold text-slate-700">
+          Employee Master
+        </h2>
+
+        <input
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setPage(1);
+          }}
+          placeholder="Search employee..."
+          className="px-3 py-2 border rounded-lg w-full sm:w-72 text-sm"
+        />
+      </div>
+
+      {/* EXPORT BAR */}
+      <div className="flex justify-between items-center mb-4 bg-slate-50 p-3 rounded-lg border">
+        <label className="flex items-center gap-2 text-sm">
           <input
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search by name, id, mobile, email..."
-            className="px-3 py-2 border rounded-lg w-full sm:w-72 text-sm"
+            type="checkbox"
+            checked={onlySelectedExport}
+            onChange={() => setOnlySelectedExport((p) => !p)}
           />
-          <button onClick={() => exportExcel(selectedRows.length > 0)} className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm">
-            Export Excel
+          Export selected only
+        </label>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() =>
+              exportExcel({
+                fileName: "EmployeeMaster",
+                sheetName: "Employees",
+                columns: exportColumns,
+                rows: getRowsForExport(onlySelectedExport),
+              })
+            }
+            className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm flex items-center gap-2"
+          >
+            <FileSpreadsheet size={16} /> Excel
           </button>
-          <button onClick={() => exportPDF(selectedRows.length > 0)} className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm">
-            Export PDF
+
+          <button
+            onClick={() =>
+              exportPDF({
+                fileName: "EmployeeMaster",
+                title: "Employee Master",
+                columns: exportColumns,
+                rows: getRowsForExport(onlySelectedExport),
+              })
+            }
+            className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm flex items-center gap-2"
+          >
+            <FileText size={16} /> PDF
+          </button>
+
+          <button
+            onClick={() =>
+              printTable({
+                title: "Employee Master",
+                columns: exportColumns,
+                rows: getRowsForExport(onlySelectedExport),
+              })
+            }
+            className="px-3 py-2 bg-slate-700 text-white rounded-lg text-sm flex items-center gap-2"
+          >
+            <Printer size={16} /> Print
           </button>
         </div>
       </div>
 
+      {/* TABLE */}
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm table-auto">
-           <thead className="bg-gray-900 sticky top-0 border-b border-indigo-200">
-         
-            <tr className="text-white text-left">
+          <thead className="bg-gray-900 text-white">
+            <tr>
               <th className="p-3">
                 <input
                   type="checkbox"
-                  checked={pageItems.length > 0 && pageItems.every((r) => selectedRows.includes(r.EmployeeID))}
                   onChange={toggleAll}
-                  className="w-4 h-4"
+                  checked={
+                    pageItems.length > 0 &&
+                    pageItems.every((r) =>
+                      selectedRows.includes(r.EmployeeID)
+                    )
+                  }
                 />
               </th>
-              <th className="p-3 text-left">EmployeeID</th>
-              <th className="p-3 text-left">First Name</th>
-              <th className="p-3 text-left">Last Name</th>
-              <th className="p-3 text-left">Gender</th>
-              <th className="p-3 text-left">DOB</th>
-              <th className="p-3 text-left">Joining</th>
-              <th className="p-3 text-left">Department</th>
-              <th className="p-3 text-left">Designation</th>
-              <th className="p-3 text-left">Mobile</th>
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Address</th>
-              <th className="p-3 text-left">City</th>
-              <th className="p-3 text-left">State</th>
-              <th className="p-3 text-left">Country</th>
-              <th className="p-3 text-left">Postal</th>
+              {exportColumns.map((c) => (
+                <th key={c.key} className="p-3 text-left">
+                  {c.header}
+                </th>
+              ))}
             </tr>
           </thead>
 
           <tbody>
-            {pageItems.map((e) => {
-              const selected = selectedRows.includes(e.EmployeeID);
-              return (
-                <tr key={e.EmployeeID} className={`${selected ? "bg-indigo-50" : ""}`}>
-                  <td className="p-3">
-                    <input type="checkbox" checked={selected} onChange={() => toggleRow(e.EmployeeID)} className="w-4 h-4" />
+            {pageItems.map((e) => (
+              <tr
+                key={e.EmployeeID}
+                className={`border-b ${
+                  selectedRows.includes(e.EmployeeID)
+                    ? "bg-indigo-50"
+                    : ""
+                }`}
+              >
+                <td className="p-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.includes(e.EmployeeID)}
+                    onChange={() => toggleRow(e.EmployeeID)}
+                  />
+                </td>
+
+                {exportColumns.map((c) => (
+                  <td key={c.key} className="p-3">
+                    {e[c.key]}
                   </td>
-                  <td className="p-3 font-mono">{e.EmployeeID}</td>
-                  <td className="p-3">{e.FirstName}</td>
-                  <td className="p-3">{e.LastName}</td>
-                  <td className="p-3">{e.Gender}</td>
-                  <td className="p-3">{e.DateOfBirth}</td>
-                  <td className="p-3">{e.JoiningDate}</td>
-                  <td className="p-3">{e.DepartmentID}</td>
-                  <td className="p-3">{e.DesignationID}</td>
-                  <td className="p-3">{e.MobileNo}</td>
-                  <td className="p-3">{e.EmailID}</td>
-                  <td className="p-3 max-w-xs truncate">{e.Address}</td>
-                  <td className="p-3">{e.City}</td>
-                  <td className="p-3">{e.State}</td>
-                  <td className="p-3">{e.Country}</td>
-                  <td className="p-3">{e.PostalCode}</td>
-                </tr>
-              );
-            })}
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* pagination */}
+      {/* PAGINATION */}
       <div className="flex items-center justify-between mt-4">
-        <div className="text-sm text-slate-600">
-          Showing {Math.min((page - 1) * perPage + 1, filtered.length)} - {Math.min(page * perPage, filtered.length)} of {filtered.length} employees
-        </div>
+        <span className="text-sm text-slate-600">
+          Page {page} of {totalPages}
+        </span>
 
-        <div className="flex items-center gap-2">
-          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-3 py-1 border rounded disabled:opacity-50">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
             Prev
           </button>
-          <div className="px-3 py-1 border rounded bg-indigo-50 text-indigo-700 font-semibold">{page} / {totalPages}</div>
-          <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-3 py-1 border rounded disabled:opacity-50">
+
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
             Next
           </button>
         </div>

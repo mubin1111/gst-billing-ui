@@ -81,17 +81,7 @@ export default function HSNMasterList() {
     setSelectedRows(allSelected ? [] : visible);
   };
 
-  /* ---------------- EXPORT ---------------- */
-  const getRowsForExport = (selectedOnly) => {
-    if (selectedOnly && selectedRows.length === 0) {
-      error("No HSN selected");
-      return [];
-    }
-    return selectedOnly
-      ? hsnList.filter((h) => selectedRows.includes(h.HSNCode))
-      : hsnList;
-  };
-
+  /* ---------------- EXPORT LOGIC ---------------- */
   const exportColumns = [
     { key: "HSNCode", header: "HSN Code" },
     { key: "HSNDescription", header: "Description" },
@@ -101,6 +91,28 @@ export default function HSNMasterList() {
     { key: "IGSTPercent", header: "IGST %" },
     { key: "CESSPercent", header: "CESS %" },
   ];
+
+  const handleExport = (type) => {
+    const sourceData = onlySelectedExport
+      ? hsnList.filter((h) => selectedRows.includes(h.HSNCode))
+      : filtered;
+
+    if (sourceData.length === 0) {
+      error(onlySelectedExport ? "No HSN selected for export" : "No data available to export");
+      return;
+    }
+
+    const config = {
+      fileName: `HSN_Master_List`,
+      title: "HSN Master Report",
+      columns: exportColumns,
+      rows: sourceData,
+    };
+
+    if (type === "excel") exportExcel(config);
+    if (type === "pdf") exportPDF(config);
+    if (type === "print") printTable(config);
+  };
 
   /* ---------------- RENDER ---------------- */
   return (
@@ -134,13 +146,53 @@ export default function HSNMasterList() {
         </div>
       </div>
 
+      {/* EXPORT OPTIONS BAR */}
+      <div className="flex items-center justify-between mb-4 bg-slate-50 p-3 rounded-lg border">
+        <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={onlySelectedExport}
+            onChange={(e) => setOnlySelectedExport(e.target.checked)}
+            className="w-4 h-4"
+          />
+          Export selected only ({selectedRows.length})
+        </label>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleExport("excel")}
+            className="px-3 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2 text-sm hover:bg-green-700 transition-colors"
+          >
+            <FileSpreadsheet className="w-4 h-4" /> Excel
+          </button>
+
+          <button
+            onClick={() => handleExport("pdf")}
+            className="px-3 py-2 bg-red-600 text-white rounded-lg flex items-center gap-2 text-sm hover:bg-red-700 transition-colors"
+          >
+            <FileText className="w-4 h-4" /> PDF
+          </button>
+
+          <button
+            onClick={() => handleExport("print")}
+            className="px-3 py-2 bg-slate-700 text-white rounded-lg flex items-center gap-2 text-sm hover:bg-slate-800 transition-colors"
+          >
+            <Printer className="w-4 h-4" /> Print
+          </button>
+        </div>
+      </div>
+
       {/* TABLE */}
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full text-sm table-fixed">
           <thead className="bg-gray-900 text-white">
             <tr>
               <th className="w-10 px-3 py-3 text-center">
-                <input type="checkbox" onChange={toggleAll} />
+                <input 
+                  type="checkbox" 
+                  onChange={toggleAll}
+                  checked={pageItems.length > 0 && pageItems.every(h => selectedRows.includes(h.HSNCode))}
+                />
               </th>
               <th className="w-28 px-3 py-3 text-left">HSN Code</th>
               <th className="px-3 py-3 text-left">Description</th>
@@ -157,7 +209,7 @@ export default function HSNMasterList() {
             {pageItems.map((h) => (
               <tr
                 key={h.HSNCode}
-                className="border-b hover:bg-slate-50"
+                className={`border-b hover:bg-slate-50 ${selectedRows.includes(h.HSNCode) ? 'bg-indigo-50/50' : ''}`}
               >
                 <td className="px-3 py-2 text-center">
                   <input
@@ -184,9 +236,9 @@ export default function HSNMasterList() {
 
                 <td className="px-3 py-2">
                   <div className="flex justify-center gap-2">
-                    <Eye className="w-4 h-4 cursor-pointer" />
-                    <Edit className="w-4 h-4 text-sky-600 cursor-pointer" />
-                    <Trash2 className="w-4 h-4 text-rose-600 cursor-pointer" />
+                    <Eye className="w-4 h-4 cursor-pointer" onClick={() => onView(h)} />
+                    <Edit className="w-4 h-4 text-sky-600 cursor-pointer" onClick={() => onEdit(h)} />
+                    <Trash2 className="w-4 h-4 text-rose-600 cursor-pointer" onClick={() => onDelete(h)} />
                   </div>
                 </td>
               </tr>
