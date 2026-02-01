@@ -182,7 +182,7 @@ export default function ExpensesMasterList() {
       {/* Desktop Table */}
       <div className="overflow-x-auto border rounded-xl shadow-lg">
         <table className="min-w-full text-sm table-auto hidden md:table">
-          <thead className="bg-gray-900 sticky top-0 border-b">
+          <thead className="bg-blue-900 sticky top-0 border-b">
             <tr className="text-white text-left">
               <th className="px-4 py-3 w-10">
                 <input type="checkbox" checked={pageItems.length > 0 && pageItems.every((c) => selectedRows.includes(c.ExpenseCode))} onChange={toggleAll} className="w-4 h-4 rounded" />

@@ -71,6 +71,10 @@ import PurchaseStock from "./components/purchase/PurchaseStock"
 
 // Billing List
 import Billing from "./components/billing/Billing";
+import BillingV1 from "./components/billing/BillingV1";
+import BillingV2 from "./components/billing/BillingV2";
+import BillingV3 from "./components/billing/BillingV3";
+import BillingV4 from "./components/billing/BillingV4";
 import BillingReturn from "./components/billing/BillingReturn";
 
 // Transactions
@@ -188,6 +192,10 @@ export default function App() {
 
                {/* Billing */}
                 <Route path="billing" element={<Billing />} />
+                <Route path="billing_v1" element={<BillingV1/>}/>
+                 <Route path="billing_v2" element={<BillingV2/>}/>
+                <Route path="billing_v3" element={<BillingV3/>}/>
+                <Route path="billing_v4" element={<BillingV4/>}/>
                 <Route path="return-billing" element={<BillingReturn />} />
 
                 {/* Transactions */}

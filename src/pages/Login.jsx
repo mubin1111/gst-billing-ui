@@ -1,145 +1,125 @@
 import React, { useState } from 'react';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiCheckCircle, FiShield } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
+import logoImage from "../assets/logoImage.png";
+import LoginImage from "../assets/LoginImage.png";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API Call
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate('/dashboard');
-    }, 1500);
-  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-4 font-sans">
-      {/* Background Decorative Elements */}
-      <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-sky-100 rounded-full blur-[120px] opacity-60"></div>
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-100 rounded-full blur-[120px] opacity-60"></div>
+    <div className="min-h-screen w-full flex items-center justify-center relative font-poppins bg-[#0F172A] overflow-hidden">
+
+      {/* BACKGROUND LAYERS */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E40AF] to-[#3B82F6]" />
+        <div className="absolute top-[10%] left-[5%] w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-[-5%] right-[10%] w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.09]"
+          style={{
+            backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 2px)`,
+            backgroundSize: "40px 40px",
+          }}
+        />
       </div>
 
-      <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[32px] shadow-2xl shadow-slate-200/60 overflow-hidden border border-slate-100">
-        
-        {/* LEFT SIDE: Brand/Marketing */}
-        <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-slate-900 via-indigo-950 to-sky-900 text-white relative">
-          <div className="z-10">
-            <div className="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg mb-8">G</div>
-            <h1 className="text-4xl font-bold leading-tight mb-4 text-white">
-              The Intelligent <br /> 
-              <span className="text-sky-400 font-extrabold underline decoration-sky-500/30 underline-offset-8">GST Solution</span>
-            </h1>
-            <p className="text-slate-300 text-lg max-w-sm">
-              Simplifying compliance, billing, and financial reporting for modern enterprises.
-            </p>
+      {/* MAIN CONTAINER */}
+      <div className="relative z-10 w-full max-w-[1200px] grid lg:grid-cols-2 gap-8 xl:gap-12 px-6 items-center">
+
+        {/* LEFT AREA — BRANDING + IMAGE */}
+        <div className="hidden lg:flex flex-col text-white">
+
+          {/* Logo */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-20 h-20  flex items-center justify-center p-2">
+              <img src={logoImage} alt="Logo" className="w-full h-full object-contain invert" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-black tracking-tighter uppercase leading-none">
+                ACTIVE<span className="text-orange-400">Cloud</span>
+              </h1>
+            </div>
           </div>
 
-          <div className="z-10 space-y-6">
-            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/10">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                <FiCheckCircle size={20} />
-              </div>
-              <p className="text-sm text-slate-200">Real-time GSTR-1 & 3B Auto-generation</p>
-            </div>
-            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/10">
-              <div className="w-10 h-10 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
-                <FiShield size={20} />
-              </div>
-              <p className="text-sm text-slate-200">ISO 27001 Certified Data Encryption</p>
-            </div>
+          {/* 3D Illustration — RESIZED + FLOATING */}
+          <div className="relative">
+            <img
+              src={LoginImage}
+              alt="GST Illustration"
+              className="w-[420px] xl:w-[480px] drop-shadow-[0_40px_80px_rgba(0,0,0,0.45)]"
+            />
+            <div className="absolute -z-10 inset-0 bg-blue-500/20 blur-3xl"></div>
           </div>
-          
-          {/* Subtle Grid Pattern Overlay */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+
         </div>
 
-        {/* RIGHT SIDE: Login Form */}
-        <div className="p-8 lg:p-16 flex flex-col justify-center">
-          <div className="max-w-sm mx-auto w-full">
-            <div className="mb-10">
-              <h2 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h2>
-              <p className="text-slate-500 font-medium">Please enter your credentials to access the console</p>
+        {/* RIGHT AREA — LOGIN FORM */}
+        <div className="flex flex-col items-center lg:items-end w-full">
+
+          {/* CARD */}
+          <div className="w-full max-w-[460px] bg-white rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.4)] p-8 md:p-10 border border-white/30 relative">
+
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+
+            <div className="text-center mb-8">
+              <div className="lg:hidden flex justify-center mb-4">
+                <img src={logoImage} alt="Logo" className="w-12 h-12 object-contain" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-800 tracking-tight font-poppins">System Login</h3>
+              <p className="text-slate-400 text-[13px] mt-1 font-medium font-poppins">Secure Administrative Access</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Input */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
-                <div className="relative group">
-                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-600 transition-colors" />
-                  <input 
-                    type="email" 
-                    required
-                    placeholder="name@company.com"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-4 focus:ring-sky-100 focus:border-sky-500 transition-all font-medium"
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+            <form className="space-y-6">
+              <div className="relative border-b border-slate-200 focus-within:border-blue-500 transition-colors py-2">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-poppins font-semibold block mb-1">User Identity</span>
+                <div className="flex items-center gap-3">
+                  <FiMail className="text-slate-300" />
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="w-full bg-transparent border-none outline-none text-sm text-slate-700 placeholder:text-slate-300"
                   />
                 </div>
               </div>
 
-              {/* Password Input */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center px-1">
-                  <label className="text-sm font-bold text-slate-700">Password</label>
-                  <a href="#" className="text-xs font-bold text-sky-600 hover:text-sky-700">Forgot Password?</a>
-                </div>
-                <div className="relative group">
-                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-600 transition-colors" />
-                  <input 
+              <div className="relative border-b border-slate-200 focus-within:border-blue-500 transition-colors py-2">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-poppins font-semibold block mb-1">Security Key</span>
+                <div className="flex items-center gap-3">
+                  <FiLock className="text-slate-300" />
+                  <input
                     type={showPassword ? "text" : "password"}
-                    required
-                    placeholder="••••••••"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-12 outline-none focus:ring-4 focus:ring-sky-100 focus:border-sky-500 transition-all font-medium"
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    placeholder="Enter password"
+                    className="w-full bg-transparent border-none outline-none text-sm text-slate-700 placeholder:text-slate-300"
                   />
-                  <button 
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
-                  </button>
                 </div>
               </div>
 
-              {/* Remember Me */}
-              <label className="flex items-center gap-3 cursor-pointer group w-fit">
-                <div className="relative">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer"
-                    onChange={(e) => setFormData({...formData, rememberMe: e.target.checked})}
-                  />
-                  <div className="w-5 h-5 border-2 border-slate-300 rounded-md peer-checked:bg-sky-500 peer-checked:border-sky-500 transition-all"></div>
-                  <FiCheckCircle className="absolute inset-0 text-white opacity-0 peer-checked:opacity-100 transition-opacity scale-75" />
-                </div>
-                <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">Keep me signed in</span>
-              </label>
-
-              {/* Submit Button */}
-              <button 
+              {/* LOGIN BUTTON */}
+              <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-3"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-poppins
+    py-3 rounded-xl mt-14 shadow-md shadow-blue-500/20
+    hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] 
+    transition-all duration-200
+    flex items-center justify-center gap-2 mt-2"
               >
-                {isLoading ? (
-                  <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : (
-                  "Sign In to Account"
-                )}
+                <span className="text-sm">Sign in </span>
+                <FiArrowRight size={16} className="mt-0.5" />
               </button>
             </form>
+            {/* FOOTER TEXT */}
+            <div className="mt-10 relative">
 
-            <p className="mt-8 text-center text-sm font-medium text-slate-500">
-              Don't have an account? <a href="#" className="text-sky-600 font-bold hover:underline">Request Access</a>
+
+            </div>
+          </div>
+
+          {/* COPYRIGHT */}
+          <div className="mt-8 text-center lg:text-right pr-4">
+            <p className="text-white text-[9px] uppercase tracking-[0.4em] font-xl mb-1">
+              © 2026 ABC Cloud Services
             </p>
+            <div className="h-1 w-1 rounded-full bg-blue-400 inline-block animate-pulse"></div>
           </div>
         </div>
       </div>

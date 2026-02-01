@@ -228,7 +228,7 @@ export default function DepartmentMasterList() {
       {/* TABLE */}
       <div className="overflow-x-auto border rounded-xl shadow-lg">
         <table className="min-w-full text-sm hidden md:table">
-          <thead className="bg-gray-900 text-white">
+          <thead className="bg-blue-900 text-white">
             <tr>
               <th className="px-4 py-3 w-10 text-center">
                 <input

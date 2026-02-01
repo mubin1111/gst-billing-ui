@@ -1,217 +1,198 @@
-// src/components/ThemeControls.jsx
 import React, { useState, useEffect } from "react";
-
-/**
- * ThemeControls - preset-only (6 options)
- * - Clicking a preset applies it immediately (localStorage + event)
- * - Writes into localStorage "app-settings" keys:
- *   themeName, themeColor, navbarColor, drawerColor,
- *   navbarUseGradient, navbarGradientStart, navbarGradientEnd, darkTheme
- *
- * NOTE: 'screenshot-default' was added to match the screenshot you shared.
- */
-
-const PRESETS = [
-  // <-- screenshot-based default (sampled from your screenshot)
-  {
-    key: "screenshot-default",
-    name: "Screenshot (Default)",
-    themeColor: "#0A6E8A",            // accent (kept GST-blue for accents)
-    navbarColor: "#252F1C",           // sampled start (dark greenish)
-    drawerColor: "#EEF1F5",           // sampled light drawer background
-    navbarUseGradient: true,
-    navbarGradientStart: "#252F1C",   // left/top gradient color (sample)
-    navbarGradientEnd: "#192411",     // right/bottom gradient color (sample)
-    darkTheme: false,
-    note: "Default look from your screenshot (light drawer, dark gradient header)",
-  },
-
-  // original GST blue
-  {
-    key: "gst-blue",
-    name: "GST Blue",
-    themeColor: "#0A6E8A",
-    navbarColor: "#0B3D91",
-    drawerColor: "#072A2E",
-    navbarUseGradient: true,
-    navbarGradientStart: "#0B3D91",
-    navbarGradientEnd: "#0A6E8A",
-    darkTheme: false,
-    note: "Classic GST blue (gradient navbar)",
-  },
-
-  {
-    key: "mint-green",
-    name: "Mint Green",
-    themeColor: "#0FBF9A",
-    navbarColor: "#047857",
-    drawerColor: "#04493B",
-    navbarUseGradient: false,
-    darkTheme: false,
-    note: "Fresh mint accent",
-  },
-
-  {
-    key: "indigo-pro",
-    name: "Indigo Pro",
-    themeColor: "#5B21B6",
-    navbarColor: "#3B0D9E",
-    drawerColor: "#1F0B3A",
-    navbarUseGradient: true,
-    navbarGradientStart: "#3B0D9E",
-    navbarGradientEnd: "#5B21B6",
-    darkTheme: false,
-    note: "Professional indigo",
-  },
-
-  {
-    key: "sunset",
-    name: "Sunset",
-    themeColor: "#FF8A00",
-    navbarColor: "#C05621",
-    drawerColor: "#3C1F00",
-    navbarUseGradient: true,
-    navbarGradientStart: "#C05621",
-    navbarGradientEnd: "#FF8A00",
-    darkTheme: false,
-    note: "Warm sunset accent",
-  },
-
-  {
-    key: "midnight",
-    name: "Midnight",
-    themeColor: "#06B6D4",
-    navbarColor: "#071022",
-    drawerColor: "#061219",
-    navbarUseGradient: false,
-    darkTheme: true,
-    note: "Dark focused UI",
-  },
-  {
-  key: "screenshot-navbar",
-  name: "Screenshot Navbar",
-  themeColor: "#0A6E8A",        // accent color (same as GST default)
-  navbarUseGradient: true,
-  navbarGradientStart: "#004B6B",
-  navbarGradientMid1: "#24448B",
-  navbarGradientMid2: "#2E2C7E",
-  navbarGradientEnd: "#0D1A33",
-  navbarColor: "#004B6B",       // fallback
-  drawerColor: "#FFFFFF",       // pure white drawer
-  darkTheme: false,
-  note: "Exact teal → blue → indigo → navy gradient (your screenshot)"
-}
-
-];
+import { FiCheck, FiSave, FiLayers } from "react-icons/fi";
 
 const STORAGE_KEY = "app-settings";
 
+const PRESETS = [
+  {
+    key: "midnight-cobalt",
+    name: "Midnight Cobalt",
+    themeColor: "#2563EB",
+    navbarColor: "#020617",
+    drawerColor: "#FFFFFF",
+    navbarUseGradient: true,
+    navbarGradientStart: "#020617",
+    navbarGradientEnd: "#1E3A8A",
+    note: "High-Authority Corporate"
+  },
+  {
+    key: "emerald-executive",
+    name: "Emerald Executive",
+    themeColor: "#1d805f",
+    navbarColor: "#064E3B",
+    drawerColor: "#F9FAFB",
+    navbarUseGradient: true,
+    navbarGradientStart: "#0c2c23",
+    navbarGradientEnd: "#065F46",
+    note: "Financial Growth & Stability"
+  },
+  {
+    key: "royal-amethyst",
+    name: "Royal Amethyst",
+    themeColor: "#4700ee",
+    navbarColor: "#2E1065",
+    drawerColor: "#FFFFFF",
+    navbarUseGradient: true,
+    navbarGradientStart: "#0e0223",
+    navbarGradientEnd: "#4C1D95",
+    note: "Modern Luxury & Creative"
+  },
+  {
+    key: "obsidian-rose",
+    name: "Obsidian Rose",
+    themeColor: "#E11D48",
+    navbarColor: "#0F172A",
+    drawerColor: "#FFF1F2",
+    navbarUseGradient: true,
+    navbarGradientStart: "#0F172A",
+    navbarGradientEnd: "#44403C",
+    note: "Bold, Dynamic & Urgent"
+  },
+  {
+    key: "sky-frost",
+    name: "Sky Frost",
+    themeColor: "#0EA5E9",
+    navbarColor: "#0369A1",
+    drawerColor: "#F0F9FF",
+    navbarUseGradient: true,
+    navbarGradientStart: "#041c2a",
+    navbarGradientEnd: "#0EA5E9",
+    note: "Clean, Airy & Modern"
+  },
+  {
+    key: "sunset-peach",
+    name: "Sunset Peach",
+    themeColor: "#71a600",
+    navbarColor: "#4C1D95",
+    drawerColor: "#ffffff",
+    navbarUseGradient: true,
+    navbarGradientStart: "#0c011c",
+    navbarGradientEnd: "#69c400",
+    note: "Friendly & Creative"
+  }
+];
+
 export default function ThemeControls({ className }) {
-  const [activeKey, setActiveKey] = useState(null);
+  const [selectedPreset, setSelectedPreset] = useState(null);
+  const [savedKey, setSavedKey] = useState("");
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const s = JSON.parse(raw);
-        setActiveKey(s?.themeName ?? PRESETS[0].key);
-      } else {
-        setActiveKey(PRESETS[0].key);
-      }
-    } catch (e) {
-      setActiveKey(PRESETS[0].key);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      setSavedKey(s?.themeName || "midnight-cobalt");
+      const initial = PRESETS.find(p => p.key === s.themeName) || PRESETS[0];
+      setSelectedPreset(initial);
+    } else {
+      setSavedKey("midnight-cobalt");
+      setSelectedPreset(PRESETS[0]);
     }
   }, []);
 
-  const applyPreset = (p) => {
-    if (!p) return;
-    const payload = {
-      themeName: p.key,
-      themeColor: p.themeColor,
-      navbarColor: p.navbarColor,
-      drawerColor: p.drawerColor,
-      navbarUseGradient: !!p.navbarUseGradient,
-      navbarGradientStart: p.navbarGradientStart || null,
-      navbarGradientEnd: p.navbarGradientEnd || null,
-      darkTheme: !!p.darkTheme,
-    };
+  const broadcastTheme = (p) => {
+    const payload = { ...p, themeName: p.key };
+    window.dispatchEvent(new CustomEvent("app-theme-updated", { detail: payload }));
+  };
 
-    try {
-      const existingRaw = localStorage.getItem(STORAGE_KEY);
-      const existing = existingRaw ? JSON.parse(existingRaw) : {};
-      const merged = { ...existing, ...payload };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-    } catch (e) {
-      console.warn("Failed to write theme to localStorage", e);
+  const handlePreview = (p) => {
+    setSelectedPreset(p);
+    broadcastTheme(p);
+  };
+
+  const handleSave = () => {
+    if (!selectedPreset) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...selectedPreset, themeName: selectedPreset.key }));
+    setSavedKey(selectedPreset.key);
+  };
+
+  const handleReset = () => {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    let themeToRestore = PRESETS[0];
+    if (raw) {
+      const s = JSON.parse(raw);
+      themeToRestore = PRESETS.find(p => p.key === s.themeName) || PRESETS[0];
     }
-
-    // notify app (custom + storage event)
-    try { window.dispatchEvent(new CustomEvent("app-theme-updated", { detail: payload })); } catch(e) {}
-    try {
-      // may throw in some envs; ignore failure
-      window.dispatchEvent(new StorageEvent("storage", {
-        key: STORAGE_KEY,
-        newValue: JSON.stringify(payload),
-      }));
-    } catch (e) {}
-
-    setActiveKey(p.key);
+    setSelectedPreset(themeToRestore);
+    broadcastTheme(themeToRestore);
   };
 
   return (
-    <div className={className}>
-      <div className="bg-white/95 p-4 rounded-2xl border border-slate-100 shadow-sm w-full max-w-3xl">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Theme Presets</div>
-            <div className="text-sm text-slate-500">Click a preset to apply instantly (navbar + drawer + accent + dark).</div>
+    <div className={`${className} max-w-5xl mx-auto p-4`}>
+      <div className="bg-white rounded-[2rem] border border-slate-200 shadow-2xl overflow-hidden">
+
+        {/* Header Block */}
+        <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center md:text-left">
+            <h3 className="text-2xl font-black text-slate-900 flex items-center gap-2 justify-center md:justify-start">
+              <FiLayers className="text-blue-600" /> Interface Style
+            </h3>
+            <p className="text-slate-500 text-sm font-medium mt-1">Select a high-performance theme for your dashboard.</p>
           </div>
-          <div className="text-xs text-slate-400">Live • 6 options</div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {PRESETS.map((p) => (
-            <button
-              key={p.key}
-              onClick={() => applyPreset(p)}
-              type="button"
-              className={`relative group text-left rounded-lg p-3 border transition flex flex-col gap-2 items-start ${activeKey === p.key ? "ring-2 ring-offset-1" : "hover:shadow-md"}`}
-              style={{ borderColor: activeKey === p.key ? p.themeColor : "transparent", background: p.darkTheme ? "#061220" : "#fff" }}
-              title={p.note}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow" style={{ background: p.navbarUseGradient ? `linear-gradient(90deg, ${p.navbarGradientStart}, ${p.navbarGradientEnd})` : p.navbarColor }}>
-                    {p.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold" style={{ color: p.darkTheme ? "#E6EEF8" : "#0f172a" }}>{p.name}</div>
-                    <div className="text-xs text-slate-400">{p.note}</div>
-                  </div>
-                </div>
-                <div className="text-xs text-slate-400">{p.darkTheme ? "Dark" : "Light"}</div>
-              </div>
-
-              <div className="w-full mt-2 rounded-md overflow-hidden border" style={{ borderColor: "rgba(15,23,42,0.04)" }}>
-                <div className="p-2 text-xs font-semibold" style={{ background: p.navbarUseGradient ? `linear-gradient(90deg, ${p.navbarGradientStart}, ${p.navbarGradientEnd})` : p.navbarColor, color: "#fff" }}>
-                  Navbar
-                </div>
-                <div className="flex">
-                  <div className="w-24 p-2 text-xs" style={{ background: p.drawerColor, color: "#111" }}>
-                    Drawer
-                  </div>
-                  <div className="flex-1 p-3 bg-white text-xs">
-                    <div className="mb-1">Invoice Preview</div>
-                    <div className="rounded px-2 py-1 inline-block text-white font-semibold" style={{ background: p.themeColor }}>{p.themeColor}</div>
-                  </div>
-                </div>
-              </div>
+          <div className="flex gap-3">
+            <button onClick={handleReset} className="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">
+              Discard
             </button>
-          ))}
+            <button
+              onClick={handleSave}
+              disabled={selectedPreset?.key === savedKey}
+              className={`flex items-center gap-2 px-8 py-2.5 rounded-xl font-black text-sm transition-all ${selectedPreset?.key === savedKey
+                  ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-95"
+                }`}
+            >
+              <FiSave /> Save Changes
+            </button>
+          </div>
         </div>
 
-        <div className="mt-4 text-xs text-slate-500">
-          Tip: Presets override previous manual colors. If you later want manual control, tell me and I’ll add an Advanced section.
+        {/* Content Grid */}
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {PRESETS.map((p) => {
+              const isSelected = selectedPreset?.key === p.key;
+              return (
+                <button
+                  key={p.key}
+                  onClick={() => handlePreview(p)}
+                  className={`group relative flex flex-col p-2 rounded-[1.8rem] transition-all duration-300 ${isSelected ? "ring-4 ring-blue-500/20 translate-y-[-4px]" : "hover:bg-slate-50"
+                    }`}
+                >
+                  {/* Visual Preview */}
+                  <div className={`w-full h-40 rounded-[1.5rem] overflow-hidden border-2 transition-all ${isSelected ? "border-blue-500 shadow-xl" : "border-slate-100"
+                    }`}>
+                    <div className="h-full flex flex-col">
+                      <div className="h-1/3 flex items-center px-4" style={{ background: p.navbarUseGradient ? `linear-gradient(90deg, ${p.navbarGradientStart}, ${p.navbarGradientEnd})` : p.navbarColor }}>
+                        <div className="w-10 h-2 bg-white/20 rounded-full" />
+                      </div>
+                      <div className="flex flex-1">
+                        <div className="w-1/4 h-full border-r border-slate-100 p-2" style={{ background: p.drawerColor }}>
+                          <div className="w-full h-1 bg-slate-200 rounded-full mb-1" />
+                          <div className="w-2/3 h-1 bg-slate-200 rounded-full" />
+                        </div>
+                        <div className="flex-1 bg-white p-4 flex flex-col justify-between">
+                          <div className="space-y-1">
+                            <div className="w-full h-1.5 bg-slate-100 rounded-full" />
+                            <div className="w-1/2 h-1.5 bg-slate-100 rounded-full" />
+                          </div>
+                          <div className="w-12 h-6 rounded-md shadow-sm self-end" style={{ background: p.themeColor }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Text Label */}
+                  <div className="mt-4 px-2 flex justify-between items-center">
+                    <div>
+                      <span className="block font-black text-slate-800 tracking-tight">{p.name}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{p.note}</span>
+                    </div>
+                    {isSelected && <div className="bg-blue-500 text-white p-1 rounded-full"><FiCheck size={14} /></div>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

@@ -180,7 +180,7 @@ export default function FinancialYearList() {
       {/* TABLE */}
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-900 text-white">
+          <thead className="bg-blue-900 text-white">
             <tr>
               <th className="w-10 px-3 py-3 text-center">
                 <input

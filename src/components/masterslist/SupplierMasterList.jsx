@@ -205,7 +205,7 @@ export default function ItemMasterList() {
       {/* Table Section */}
       <div className="overflow-x-auto border rounded-xl shadow-lg">
         <table className="min-w-full text-sm table-auto hidden md:table">
-          <thead className="bg-gray-900 text-white sticky top-0">
+          <thead className="bg-blue-900 text-white sticky top-0">
             <tr className="text-left">
               <th className="px-4 py-3 w-10">
                 <input

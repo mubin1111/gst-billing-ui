@@ -2,10 +2,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
 /* define variable for tailwind v4 approach (optional) */
 @theme {
   --font-poppins: "Poppins", sans-serif;
 }
+
+/* .header-label {
+  @apply text-slate-500 font-bold uppercase block mb-1.5 text-[10px];
+}
+
+.header-input {
+  @apply w-full h-[38px] border border-amber-200 rounded-md px-2
+         bg-white outline-none shadow-sm
+         focus:ring-2 focus:ring-blue-400;
+} */
+
 
 /* Force test — temporary debug */
 body {
@@ -61,3 +75,39 @@ body {
 .drawer-scrollbar > .px-3 {
   padding-right: 6px;
 }
+
+
+/* scrollbar  */
+/* Remove top & bottom scrollbar buttons */
+.drawer-scrollbar::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+/* Ultra slim scrollbar */
+.drawer-scrollbar::-webkit-scrollbar {
+  width: 2px;  /* slim */
+}
+
+.drawer-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drawer-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 999px;
+}
+
+.drawer-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+/* Firefox support */
+.drawer-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.6) transparent;
+}
+
+
+

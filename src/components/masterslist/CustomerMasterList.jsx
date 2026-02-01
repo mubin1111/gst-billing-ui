@@ -11,10 +11,16 @@ import {
   Printer,
   Plus,
 } from "lucide-react";
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+
 
 import { useToast } from "../contextapi/ToastContext";
 import { useExport } from "../contextapi/ExportContext";
 import { useActions } from "../contextapi/ActionsContext";
+
+
 
 export default function CustomerList() {
   const navigate = useNavigate();
@@ -264,24 +270,8 @@ export default function CustomerList() {
       </div>
 
       {/* Export & selection */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5 p-3 rounded-lg bg-slate-50 border border-slate-200">
-        <div className="flex items-center gap-4 text-sm text-slate-600">
-          <span className="font-semibold">
-            {selectedRows.length} customer
-            {selectedRows.length !== 1 ? "s" : ""} selected
-          </span>
-
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={onlySelectedExport}
-              onChange={(e) => setOnlySelectedExport(e.target.checked)}
-              className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
-            />
-            <span className="text-xs sm:text-sm">
-              Export/Print selected only
-            </span>
-          </label>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5 p-2 rounded-lg bg-slate-50 border border-slate-200">
+        <div className="flex items-center gap-4 text-sm text-slate-600">  
         </div>
 
         <div className="flex items-center gap-3">
@@ -311,11 +301,11 @@ export default function CustomerList() {
         </div>
       </div>
 
-      {/* Table / cards */}
+    {/* Table / cards */}
       <div className="overflow-x-auto border rounded-xl shadow-lg">
         {/* Desktop table */}
         <table className="min-w-full text-sm table-auto hidden md:table">
-          <thead className="bg-gray-900 sticky top-0 border-b border-indigo-200">
+          <thead className="bg-blue-900 sticky top-0 border-b border-indigo-200">
             <tr className="text-white text-left">
               <th className="px-4 py-3 w-10">
                 <input
@@ -329,6 +319,10 @@ export default function CustomerList() {
                 />
               </th>
               <th className="px-4 py-3">ID</th>
+              
+              {/* MOVED ACTIONS HEADER HERE */}
+              <th className="px-4 py-3 text-center w-28 border-x border-gray-700">Actions</th>
+              
               <th className="px-4 py-3">Customer Name</th>
               <th className="px-4 py-3">Address</th>
               <th className="px-4 py-3">City</th>
@@ -336,7 +330,6 @@ export default function CustomerList() {
               <th className="px-4 py-3">Phone / Email</th>
               <th className="px-4 py-3 text-center">Active</th>
               <th className="px-4 py-3 text-center">Deleted</th>
-              <th className="px-4 py-3 text-center w-28">Actions</th>
             </tr>
           </thead>
 
@@ -344,7 +337,7 @@ export default function CustomerList() {
             {pageItems.length === 0 ? (
               <tr>
                 <td
-                  colSpan="10"
+                  colSpan="11" /* Increased colSpan to account for the new column order */
                   className="text-center py-8 text-slate-500 italic"
                 >
                   No customer records found.
@@ -372,6 +365,22 @@ export default function CustomerList() {
                     <td className="px-4 py-3 font-mono text-slate-700">
                       {c.id}
                     </td>
+
+                    {/* MOVED ACTIONS CELL HERE */}
+                    <td className="px-4 py-3 text-center border-r border-slate-50">
+                  <div className="flex items-center justify-center gap-1">
+                    <button onClick={() => handleView(c)} className="p-2 rounded-full hover:bg-indigo-100 text-indigo-600 transition" title="View">
+                      <VisibilityIcon sx={{ fontSize: 18 }} />
+                    </button>
+                    <button onClick={() => handleEdit(c)} className="p-2 rounded-full hover:bg-sky-100 text-sky-600 transition" title="Edit">
+                      <ModeEditIcon sx={{ fontSize: 18 }} />
+                    </button>
+                    <button onClick={() => handleDelete(c.id)} className="p-2 rounded-full hover:bg-rose-100 text-rose-600 transition" title="Delete">
+                      <DeleteIcon sx={{ fontSize: 18 }} />
+                    </button>
+                  </div>
+                </td>
+
                     <td className="px-4 py-3 font-medium text-slate-700">
                       {c.CustomerName}
                     </td>
@@ -386,44 +395,17 @@ export default function CustomerList() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       {c.isActive ? (
-                        <span className="text-emerald-600 font-semibold">
-                          Yes
-                        </span>
+                        <span className="text-emerald-600 font-semibold text-xs bg-emerald-50 px-2 py-1 rounded">Yes</span>
                       ) : (
-                        <span className="text-slate-400">No</span>
+                        <span className="text-slate-400 text-xs">No</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {c.isDeleted ? (
-                        <span className="text-rose-600 font-semibold">Yes</span>
+                        <span className="text-rose-600 font-semibold text-xs bg-rose-50 px-2 py-1 rounded">Yes</span>
                       ) : (
-                        <span className="text-slate-400">No</span>
+                        <span className="text-slate-400 text-xs">No</span>
                       )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          onClick={() => handleView(c)}
-                          className="p-2 rounded-full hover:bg-slate-200 text-slate-600 transition"
-                          title="View"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleEdit(c)}
-                          className="p-2 rounded-full hover:bg-slate-200 text-sky-600 transition"
-                          title="Edit"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(c.id)}
-                          className="p-2 rounded-full hover:bg-slate-200 text-rose-600 transition"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
                     </td>
                   </tr>
                 );
@@ -432,89 +414,42 @@ export default function CustomerList() {
           </tbody>
         </table>
 
-        {/* Mobile card view */}
+        {/* Mobile card view (Actions kept at bottom for better thumb reach) */}
         <div className="md:hidden p-4 space-y-4">
-          {pageItems.length === 0 && (
-            <div className="text-center py-6 text-slate-500 italic">
-              No customers found.
-            </div>
-          )}
           {pageItems.map((c) => {
             const selected = selectedRows.includes(c.id);
             return (
               <div
                 key={c.id}
                 className={`border rounded-xl p-4 shadow-md transition ${
-                  selected
-                    ? "bg-indigo-50 border-indigo-300"
-                    : "bg-white border-slate-200 hover:shadow-lg"
+                  selected ? "bg-indigo-50 border-indigo-300" : "bg-white border-slate-200"
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0 pr-4">
-                    <div className="font-semibold text-lg text-indigo-700 truncate">
-                      {c.CustomerName}
+                    <div className="flex items-center gap-2">
+                       <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded font-mono text-slate-500">#{c.id}</span>
+                       <div className="font-semibold text-indigo-700 truncate">{c.CustomerName}</div>
                     </div>
-                    <div className="text-sm text-slate-500 mt-1">
-                      {c.AddressLine1}, {c.City} - {c.PinCode}
-                    </div>
+                    <div className="text-xs text-slate-500 mt-1">{c.City} - {c.PinCode}</div>
                   </div>
-
-                  <div className="text-right">
-                    <input
-                      type="checkbox"
-                      checked={selected}
-                      onChange={() => toggleRow(c.id)}
-                      className="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 mb-2"
-                    />
-                    <div className="text-xs font-semibold">
-                      {c.isActive ? "Active" : "Inactive"}
-                    </div>
-                  </div>
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={() => toggleRow(c.id)}
+                    className="w-5 h-5 text-indigo-600 rounded border-slate-300"
+                  />
                 </div>
-
-                <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t">
-                  <div>
-                    <div className="text-xs text-slate-500">Phone</div>
-                    <div className="text-sm font-medium">{c.Phone}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-500">Email</div>
-                    <div className="text-sm font-medium truncate">
-                      {c.Email}
-                    </div>
-                  </div>
-                </div>
-
                 <div className="flex justify-end gap-3 mt-4 pt-3 border-t">
-                  <button
-                    onClick={() => handleView(c)}
-                    className="p-2 rounded-full hover:bg-slate-200 text-slate-600 transition"
-                    title="View"
-                  >
-                    <Eye className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleEdit(c)}
-                    className="p-2 rounded-full hover:bg-slate-200 text-sky-600 transition"
-                    title="Edit"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(c.id)}
-                    className="p-2 rounded-full hover:bg-slate-200 text-rose-600 transition"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+                  <button onClick={() => handleView(c)} className="p-2 bg-slate-50 rounded-full text-indigo-600"><Eye size={18} /></button>
+                  <button onClick={() => handleEdit(c)} className="p-2 bg-slate-50 rounded-full text-sky-600"><Edit size={18} /></button>
+                  <button onClick={() => handleDelete(c.id)} className="p-2 bg-slate-50 rounded-full text-rose-600"><Trash2 size={18} /></button>
                 </div>
               </div>
             );
           })}
         </div>
       </div>
-
       {/* Footer / Pagination */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 p-4 border-t">
         <div className="text-sm text-slate-600">

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Save, Printer, Mail, Send, Truck, XCircle, Plus, Trash2, FileText, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
+import { Save, Printer, Mail, Send, Truck, XCircle, Plus, Trash2, MapPin, FileText, Hash, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-const Billing = () => {
+const BillingV4 = () => {
   const [paymentMode, setPaymentMode] = useState('');
- const [invoiceDate, setInvoiceDate] = useState(new Date());
+  const [invoiceDate, setInvoiceDate] = useState(new Date());
+  const [invoiceTime, setInvoiceTime] = useState(new Date());
   const createEmptyRow = () => ({
     id: Date.now() + Math.random(),
     itemName: '',
@@ -113,7 +114,7 @@ const Billing = () => {
   const handleKeyDown = (e, index) => { if (e.key === 'Tab' && !e.shiftKey && index === items.length - 1) addNewRow(); };
 
   return (
-    <div className="min-h-screen p-2 sm:p-4 md:p-3 text-[12px] font-poppins text-slate-700">
+    <div className="min-h-screen p-2 sm:p-4 md:p-3 text-[12px] font-sans text-slate-700">
       <div className="max-w-[1500px] mx-auto bg-white  rounded-xl overflow-hidden border border-slate-200">
 
         {/* STICKY ACTION BAR */}
@@ -131,47 +132,118 @@ const Billing = () => {
         {/* HEADER SECTION */}
         <div className="grid grid-cols-12 bg-amber-50/50">
           <div className="col-span-12 p-3 bg-amber-100/50 flex items-center gap-2 border-b border-amber-200">
+            <FileText size={14} className="text-amber-800" />
             <span className="font-bold text-amber-800 uppercase tracking-wider text-[10px]">Invoice Header & Settings</span>
           </div>
-          <div className="col-span-3 p-4 border-r border-amber-200/50">
-            <label className="text-slate-500 font-bold uppercase block mb-1.5">Invoice No</label>
-            <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm" placeholder="INV/2024/0001" />
+
+          <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Invoice No</label>
+            <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white font-bold outline-none shadow-sm" placeholder="INV/2024/0001" />
           </div>
+
           {/* Date Section - Fixed wrapping div and label */}
-          <div className="col-span-6 md:col-span-2 p-4 border-r border-b border-amber-200/50">
-            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Invoice Date</label>
-            <DatePicker
-              selected={invoiceDate}
-              onChange={(date) => setInvoiceDate(date)}
-              dateFormat="dd MMM yyyy"
-              showYearDropdown
-              showMonthDropdown
-              dropdownMode="select"
-              className="w-full border border-amber-200 rounded-md p-2 bg-white font-bold shadow-sm focus:ring-2 focus:ring-blue-400 outline-none h-[38px]"
-              calendarClassName="!rounded-xl !border !border-slate-200 shadow-xl"
-            />
+          <div className="col-span-6 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">
+              Invoice Date
+            </label>
+
+            <div className="relative">
+              {/* Calendar Icon */}
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-slate-400"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+
+              <DatePicker
+                selected={invoiceDate}
+                onChange={(date) => setInvoiceDate(date)}
+                dateFormat="dd MMM yyyy"
+                showYearDropdown
+                showMonthDropdown
+                dropdownMode="select"
+                /* Added pl-10 to make room for the icon */
+                className="w-full border border-amber-200 rounded-md p-2 pl-10 bg-white font-bold shadow-sm focus:ring-2 focus:ring-blue-400 outline-none h-[38px]"
+                calendarClassName="!rounded-xl !border !border-slate-200 shadow-xl"
+              />
+            </div>
           </div>
-          <div className="col-span-3 p-4 border-r border-amber-200/50">
-            <label className="text-slate-500 font-bold uppercase block mb-1.5">Place of Supply</label>
-            <select className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm appearance-none">
+
+          {/* Time Section */}
+          <div className="col-span-6 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Time</label>
+
+            <div className="relative">
+              {/* Clock Icon */}
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-slate-400"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+
+              <DatePicker
+                selected={invoiceTime}
+                onChange={(time) => setInvoiceTime(time)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={5}
+                timeCaption="Time"
+                dateFormat="hh:mm aa"
+                /* Added pl-10 to account for the icon */
+                className="w-full border border-amber-200 rounded-md p-2 pl-10 bg-white font-bold shadow-sm focus:ring-2 focus:ring-blue-400 outline-none h-[38px]"
+              />
+            </div>
+          </div>
+
+
+          <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Financial Year</label>
+            <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white outline-none shadow-sm" placeholder="2024-25" />
+          </div>
+
+          <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Place of Supply</label>
+            <select className="w-full border border-amber-200 rounded-md p-2 bg-white outline-none shadow-sm appearance-none font-medium">
               <option>Maharashtra (27)</option>
               <option>Gujarat (24)</option>
-              <option>Karnataka (29)</option>
             </select>
           </div>
-          <div className="col-span-3 p-4 space-y-2 bg-amber-100/20">
-            <div className="flex justify-between items-center bg-white/60 p-1.5 rounded border border-amber-200/50">
-              <span className="font-medium">Reverse Charge</span>
-              <input type="checkbox" className="w-4 h-4 rounded border-amber-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
-            </div>
-            <div className="flex justify-between items-center bg-white/60 p-1.5 rounded border border-amber-200/50">
-              <span className="font-medium">E-Invoice Required</span>
-              <input type="checkbox" className="w-4 h-4 rounded border-amber-300 text-blue-600 focus:ring-blue-500 cursor-pointer" defaultChecked />
-            </div>
+
+          <div className="col-span-12 md:col-span-3 p-4 border-b border-amber-200/50">
+            <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Supply Type</label>
+            <select className="w-full border border-amber-200 rounded-md p-2 bg-white outline-none shadow-sm appearance-none font-medium">
+              <option>B2B (Regular)</option>
+              <option>B2C (Consumer)</option>
+            </select>
           </div>
         </div>
 
-        {/* CUSTOMER SECTION */}
         {/* CUSTOMER SECTION */}
         <div className="border-t border-amber-200">
           <div className="p-3 bg-amber-100/30 flex items-center gap-2 border-b border-amber-200">
@@ -180,58 +252,98 @@ const Billing = () => {
           </div>
 
           <div className="grid grid-cols-12 gap-0">
-            {/* Row 1: Primary Info */}
-            <div className="col-span-12 md:col-span-5 p-4 border-r border-b border-amber-200/50">
+            {/* ROW 1: Identity */}
+            <div className="col-span-12 md:col-span-2 p-4 border-r border-b border-amber-200/50 bg-slate-50/30">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Customer ID</label>
+              <div className="relative">
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm transition-all" placeholder="CUST-001" />
+                <Hash size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
+            </div>
+
+            <div className="col-span-12 md:col-span-4 p-4 border-r border-b border-amber-200/50">
               <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Customer Name</label>
               <div className="relative">
-                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all" placeholder="Search or enter customer name..." />
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all font-bold" placeholder="Search or enter name..." />
                 <User size={14} className="absolute left-2.5 top-3 text-slate-400" />
               </div>
             </div>
 
-            <div className="col-span-6 md:col-span-4 p-4 border-r border-b border-amber-200/50">
-              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">GSTIN / UIN</label>
+            <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Customer Type</label>
+              <select className="w-full border border-amber-200 rounded-md p-2 bg-white outline-none shadow-sm font-medium">
+                <option>Registered (GST)</option>
+                <option>Unregistered</option>
+                <option>Composition</option>
+              </select>
+            </div>
+
+            <div className="col-span-12 md:col-span-3 p-4 border-b border-amber-200/50">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Contact Person</label>
               <div className="relative">
-                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white focus:ring-2 focus:ring-blue-400 outline-none uppercase shadow-sm" placeholder="27XXXXX0000X1Z1" />
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm transition-all" placeholder="In-charge name" />
+                <User size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
+            </div>
+
+            {/* ROW 2: Tax & Contact */}
+            <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50 bg-blue-50/20">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">GST Number</label>
+              <div className="relative">
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm uppercase" placeholder="27AAAAA0000A1Z5" />
                 <Landmark size={14} className="absolute left-2.5 top-3 text-slate-400" />
               </div>
             </div>
 
-            <div className="col-span-6 md:col-span-3 p-4 border-b border-amber-200/50">
-              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Registration Type</label>
-              <select className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm">
-                <option>B2B - Regular</option>
-                <option>B2B - Composition</option>
-                <option>B2C - Consumer</option>
-                <option>Export / SEZ</option>
-              </select>
+            <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50 bg-blue-50/20">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">PAN</label>
+              <div className="relative">
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm uppercase" placeholder="ABCDE1234F" />
+                <CreditCard size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
             </div>
 
-            {/* Row 2: Address & Location */}
-
-
-            <div className="col-span-4 md:col-span-2 p-4 border-r border-amber-200/50">
-              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Pincode</label>
-              <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm" placeholder="400001" />
+            <div className="col-span-12 md:col-span-3 p-4 border-r border-b border-amber-200/50">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Mobile Number</label>
+              <div className="relative">
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm transition-all" placeholder="98XXXXXXXX" />
+                <Send size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
             </div>
 
-            <div className="col-span-4 md:col-span-2 p-4 border-r border-amber-200/50">
-              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">District</label>
-              <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm" placeholder="Mumbai" />
+            <div className="col-span-12 md:col-span-3 p-4 border-b border-amber-200/50">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Email ID</label>
+              <div className="relative">
+                <input type="email" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm transition-all" placeholder="customer@email.com" />
+                <Mail size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
             </div>
 
-            <div className="col-span-4 md:col-span-3 p-4">
-              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">State / Union Territory</label>
-              <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm" placeholder="Maharashtra" />
-            </div>
-
-            <div className="col-span-12 md:col-span-5 p-4 border-r border-amber-200/50">
+            {/* ROW 3: Address Details */}
+            <div className="col-span-12 md:col-span-4 p-4 border-r border-b border-amber-200/50">
               <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Billing Address</label>
-              <textarea
-                rows="1"
-                className="w-full border border-amber-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm resize-none"
-                placeholder="Building, Street, Area..."
-              ></textarea>
+              <div className="relative">
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm" placeholder="Street, City, Zip..." />
+                <MapPin size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
+            </div>
+
+            <div className="col-span-12 md:col-span-2 p-4 border-r border-b border-amber-200/50 bg-slate-50/30">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Billing State ID</label>
+              <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white outline-none shadow-sm" placeholder="27" />
+            </div>
+
+            <div className="col-span-12 md:col-span-4 p-4 border-r border-b border-amber-200/50">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Shipping Address</label>
+              <div className="relative">
+                <input type="text" className="w-full border border-amber-200 rounded-md p-2 pl-8 bg-white outline-none shadow-sm" placeholder="Same as billing or other..." />
+                <Truck size={14} className="absolute left-2.5 top-3 text-slate-400" />
+              </div>
+            </div>
+
+            <div className="col-span-12 md:col-span-2 p-4 border-b border-amber-200/50 bg-slate-50/30">
+              <label className="text-slate-500 font-bold uppercase block mb-1.5 text-[10px]">Shipping State ID</label>
+              <input type="text" className="w-full border border-amber-200 rounded-md p-2 bg-white outline-none shadow-sm" placeholder="27" />
             </div>
           </div>
         </div>
@@ -646,4 +758,4 @@ const Billing = () => {
   );
 };
 
-export default Billing;
+export default BillingV4;

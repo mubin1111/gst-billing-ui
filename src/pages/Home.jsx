@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import heroImage from "../assets/homePageImage.png";
 
 const getGreeting = () => {
@@ -12,65 +12,54 @@ const Home = () => {
   const greeting = useMemo(() => getGreeting(), []);
   const userName = "Mubin";
 
+  const tabs = [
+    { key: "home", label: "Home", image: heroImage },
+  
+  ];
+
+  const [activeTab, setActiveTab] = useState("home");
+
   return (
     <div className="w-full bg-white overflow-hidden flex font-poppins text-gray-900">
 
-      {/* HEIGHT FIXED */}
-      <main className="flex w-full h-[600px] md:h-screen lg:h-[450px] flex-col md:flex-col lg:flex-row">
+     
 
+      {/* MAIN LAYOUT */}
+      <main className="flex w-full h-[600px] md:h-screen lg:h-[450px] flex-col lg:flex-row">
 
-        {/* IMAGE SECTION */}
+        {/* LEFT IMAGE (changes by tab) */}
         <div className="
-  w-full
-  lg:w-1/2
-  flex
-  justify-center
-  items-center
-  md:items-center
-  md:pt-0
-  order-1
-  md:order-1
-  lg:order-2
-">
-
+          w-full lg:w-1/2 flex justify-center items-center order-1 lg:order-2
+        ">
           <img
-            src={heroImage}
-            alt="Dashboard"
+            src={tabs.find((t) => t.key === activeTab).image}
+            alt="Tab Illustration"
             className="
-              max-h-[260px]
-              sm:max-h-[300px]
-              md:max-h-[700px]
-              lg:max-h-[450px]
-              w-auto
-              object-contain
+              max-h-[260px] sm:max-h-[300px]
+              md:max-h-[700px] lg:max-h-[450px]
+              object-contain w-auto
             "
           />
         </div>
 
-        {/* GREETING SECTION */}
+        {/* RIGHT GREETING */}
         <div
           className="
-            w-full
-            lg:w-1/2
-            flex
-            justify-center
-            items-center
-            px-6
-            md:mt-4
-            text-center
-            lg:text-left
-            order-2
-            md:order-2
-            lg:order-1
+            w-full lg:w-1/2 flex justify-center items-center px-6
+            text-center lg:text-left order-2 lg:order-1
           "
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black">
               {greeting},
             </h1>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-600">
+
+            <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-blue-500">
               {userName}
             </h2>
+
+            {/* Dynamic Tab Label */}
+           
           </div>
         </div>
 

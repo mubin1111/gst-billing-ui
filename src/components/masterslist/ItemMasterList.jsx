@@ -190,7 +190,7 @@ export default function EmployeeList() {
       {/* Table */}
       <div className="overflow-x-auto border rounded-xl shadow-lg">
         <table className="min-w-full text-sm table-auto hidden md:table">
-          <thead className="bg-gray-900 sticky top-0 border-b border-indigo-200">
+          <thead className="bg-blue-900 sticky top-0 border-b border-indigo-200">
             <tr className="text-white text-left">
               <th className="px-4 py-3 w-10">
                 <input type="checkbox" checked={pageItems.length > 0 && pageItems.every((c) => selectedRows.includes(c.EmployeeID))} onChange={toggleAll} className="w-4 h-4 rounded border-indigo-300 focus:ring-indigo-500" />

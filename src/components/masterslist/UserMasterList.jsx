@@ -201,7 +201,7 @@ export default function UnitCompanyList() {
 
       {/* TABLE (ACTION BUTTON SIZE SAME) */}
       <table className="w-full text-sm border">
-        <thead className="bg-gray-900 text-white">
+        <thead className="bg-blue-900 text-white">
           <tr>
             <th className="p-3">
               <input

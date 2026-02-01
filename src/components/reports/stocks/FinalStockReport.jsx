@@ -214,7 +214,7 @@ export default function FinalStockReport() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[1100px]">
               <thead>
-                <tr className="bg-blue-600 text-white">
+                <tr className="bg-blue-900 text-white">
                   <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest border-r border-blue-500/50">Item Name</th>
                   <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest border-r border-blue-500/50">Category</th>
                   <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-center border-r border-blue-500/50">Unit</th>

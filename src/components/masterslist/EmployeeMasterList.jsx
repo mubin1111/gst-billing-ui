@@ -194,7 +194,7 @@ export default function EmployeeMasterList({ employees: incoming }) {
       {/* TABLE */}
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm table-auto">
-          <thead className="bg-gray-900 text-white">
+          <thead className="bg-blue-900 text-white">
             <tr>
               <th className="p-3">
                 <input

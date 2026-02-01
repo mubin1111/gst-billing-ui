@@ -260,7 +260,7 @@ export default function CityList() {
       {/* TABLE or CARD VIEW (mobile) */}
       <div className="overflow-x-auto border rounded-xl shadow-lg">
         <table className="min-w-full text-sm table-auto hidden md:table">
-          <thead className="bg-gray-900 sticky top-0 border-b border-indigo-200">
+          <thead className="bg-blue-900 sticky top-0 border-b border-indigo-200">
             <tr className="text-white text-left">
               <th className="px-4 py-3 w-10">
                 <input
