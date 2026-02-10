@@ -73,31 +73,37 @@ export default function ItemMaster() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="w-full p-3 space-y-4">
-        {/* Item Name & Code */}
-        <div>
-          <label className="text-xs font-medium text-slate-600">Item Name <span className="text-red-500">*</span></label>
-          <input
-            name="ItemName"
-            value={form.ItemName}
-            onChange={handleChange}
-            type="text"
-            className={`${inputClass} px-3 py-2 mt-1`}
-            placeholder="e.g., Blue Pen"
-            required
-          />
-        </div>
+        {/* Item Name & Code - Divided 6-6 in one line */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-[11px] font-semibold text-slate-600">
+              Item Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="ItemName"
+              value={form.ItemName}
+              onChange={handleChange}
+              type="text"
+              className={`${inputClass} px-2 py-1.5 mt-0.5`}
+              placeholder="e.g., Blue Pen"
+              required
+            />
+          </div>
 
-        <div>
-          <label className="text-xs font-medium text-slate-600">Item Code <span className="text-red-500">*</span></label>
-          <input
-            name="ItemCode"
-            value={form.ItemCode}
-            onChange={handleChange}
-            type="text"
-            className={`${inputClass} px-3 py-2 mt-1`}
-            placeholder="e.g., BP-001"
-            required
-          />
+          <div>
+            <label className="text-[11px] font-semibold text-slate-600">
+              Item Code <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="ItemCode"
+              value={form.ItemCode}
+              onChange={handleChange}
+              type="text"
+              className={`${inputClass} px-2 py-1.5 mt-0.5`}
+              placeholder="e.g., BP-001"
+              required
+            />
+          </div>
         </div>
 
         {/* Details */}
@@ -199,19 +205,23 @@ export default function ItemMaster() {
           </div>
         </div>
 
-        {/* Opening Stock */}
-        <div>
-          <label className="text-xs font-medium text-slate-600">Opening Stock</label>
-          <input
-            name="OpeningStock"
-            value={form.OpeningStock}
-            onChange={handleChange}
-            type="number"
-            min="0"
-            step="1"
-            className={`${inputClass} px-3 py-2 mt-1`}
-            placeholder="Initial stock quantity"
-          />
+        {/* Opening Stock - Divided 6-6 in one line */}
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="text-[11px] font-semibold text-slate-600">Opening Stock</label>
+            <input
+              name="OpeningStock"
+              value={form.OpeningStock}
+              onChange={handleChange}
+              type="number"
+              min="0"
+              step="1"
+              className={`${inputClass} px-2 py-1.5 mt-0.5`}
+              placeholder="Initial stock quantity"
+            />
+          </div>
+
+          <div />
         </div>
 
         {/* Buttons - full width on mobile */}

@@ -15,7 +15,7 @@
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
     "@tailwindcss/vite": "^4.1.17",
-    "axios": "^1.13.2",
+    "axios": "^1.13.4",
     "date-fns": "^4.1.0",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",

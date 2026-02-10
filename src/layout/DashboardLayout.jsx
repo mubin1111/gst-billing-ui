@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 /* ---------------- react-icons imports ---------------- */
-import { FiFileText, FiSearch, FiChevronDown, FiChevronRight, FiChevronLeft, FiLogOut, FiUser, FiMenu, FiBell } from "react-icons/fi";
+import { FiFileText, FiSearch, FiChevronDown, FiChevronRight, FiChevronLeft, FiLogOut,FiMenu, FiBell } from "react-icons/fi";
 
 /* ---------------- Asset Imports ---------------- */
 import logoImage from "../assets/logoImage.png";
@@ -105,6 +105,7 @@ const initialMenu = [
       { key: "employee-expenses", title: "Employee Expenses", path: "/employee-expenses" },
     ],
   },
+
   {
     key: "reports",
     title: "Reports",
@@ -232,7 +233,7 @@ const DashboardLayout = () => {
     const update = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }));
-      setCurrentDate(now.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "2-digit", year: "numeric" }));
+      setCurrentDate(now.toLocaleDateString("en-UK", { weekday: "short", month: "short", day: "2-digit", year: "numeric" }));
     };
     update();
     const t = setInterval(update, 60000);
@@ -346,7 +347,7 @@ const DashboardLayout = () => {
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black ">
               <img src={logoImage} alt="logo" />
             </div>
-            <span className="text-xl font-black text-black tracking-tighter uppercase font-poppins">abc<span className="text-orange-500">123</span></span>
+            <span className="text-xl font-black text-black tracking-tighter uppercase font-semibold font-poppins">abc<span className="text-orange-500">123</span></span>
           </div>
           <button
             onClick={() => setOpen(!open)}
@@ -448,8 +449,8 @@ const DashboardLayout = () => {
 
         <main className="flex-1 p-6 bg-[#F0F2F5] overflow-y-auto">
           <div className="max-w-[1800px] mx-auto min-h-full">
-            <div className="bg-white rounded-[1.5rem] border border-slate-200 shadow-sm min-h-[calc(100vh-10rem)] p-8">
-              <Outlet />
+            <div >
+              <Outlet/>
             </div>
           </div>
         </main>

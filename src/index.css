@@ -109,5 +109,8 @@ body {
   scrollbar-color: rgba(0,0,0,0.6) transparent;
 }
 
-
-
+/* toastify css */
+@keyframes toast-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}

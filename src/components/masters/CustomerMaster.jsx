@@ -1,25 +1,14 @@
 // src/pages/CustomerMaster.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiMail, FiPhone, FiSave, FiX, FiCreditCard, FiMapPin, FiBriefcase } from "react-icons/fi";
+import { FiMail, FiPhone, FiSave, FiX, FiCreditCard, FiBriefcase } from "react-icons/fi";
 
 export default function CustomerMaster() {
   const [form, setForm] = useState({
-    unitName: "",
-    gstin: "",
-    pan: "",
-    line1: "",
-    line2: "",
-    city: "",
-    pincode: "",
-    state: "",
-    stateCode: "",
-    email: "",
-    phone: "",
-    creditlimit: "",
-    bankName: "",
-    accountNumber: "",
-    ifsc: ""
+    unitName: "", gstin: "", pan: "", line1: "", line2: "",
+    city: "", pincode: "", state: "", stateCode: "",
+    email: "", phone: "", creditlimit: "", bankName: "",
+    accountNumber: "", ifsc: ""
   });
 
   const handleChange = (e) => {
@@ -29,7 +18,6 @@ export default function CustomerMaster() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // basic validation
     if (!form.unitName.trim()) {
       alert("Please provide Customer Name");
       return;
@@ -40,21 +28,10 @@ export default function CustomerMaster() {
 
   const handleReset = () =>
     setForm({
-      unitName: "",
-      gstin: "",
-      pan: "",
-      line1: "",
-      line2: "",
-      city: "",
-      pincode: "",
-      state: "",
-      stateCode: "",
-      email: "",
-      phone: "",
-      creditlimit: "",
-      bankName: "",
-      accountNumber: "",
-      ifsc: ""
+      unitName: "", gstin: "", pan: "", line1: "", line2: "",
+      city: "", pincode: "", state: "", stateCode: "",
+      email: "", phone: "", creditlimit: "", bankName: "",
+      accountNumber: "", ifsc: ""
     });
 
   const inputClass =
@@ -62,7 +39,7 @@ export default function CustomerMaster() {
 
   return (
     <div className="w-full m-0 p-0 bg-white">
-      {/* Header (compact like ItemMaster) */}
+      {/* Header */}
       <div className="w-full flex items-center justify-between px-3 py-3 border-b">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-md bg-indigo-600 text-white flex items-center justify-center text-lg shadow">
@@ -73,7 +50,6 @@ export default function CustomerMaster() {
             <p className="text-xs text-slate-500">Add or update customer / unit details</p>
           </div>
         </div>
-
         <Link
           to="/customer-master-list"
           className="px-3 py-1.5 rounded-md bg-indigo-600 text-white text-xs font-semibold shadow hover:bg-indigo-700"
@@ -84,23 +60,26 @@ export default function CustomerMaster() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="w-full p-3 space-y-4">
-        {/* Customer Name */}
-        <div>
-          <label className="text-xs font-medium text-slate-600">Customer Name <span className="text-red-500">*</span></label>
-          <input
-            name="unitName"
-            value={form.unitName}
-            onChange={handleChange}
-            type="text"
-            className={`${inputClass} px-3 py-2 mt-1`}
-            placeholder="e.g., ABC Traders"
-            required
-          />
+        
+        {/* Row: Customer Name (Full Width) */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12">
+            <label className="text-xs font-medium text-slate-600">Customer Name <span className="text-red-500">*</span></label>
+            <input
+              name="unitName"
+              value={form.unitName}
+              onChange={handleChange}
+              type="text"
+              className={`${inputClass} px-3 py-2 mt-1`}
+              placeholder="e.g., ABC Traders"
+              required
+            />
+          </div>
         </div>
 
-        {/* GSTIN / PAN / Credit Limit */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
+        {/* Row: GSTIN, PAN, Credit Limit (4-4-4 split) */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">GSTIN</label>
             <input
               name="gstin"
@@ -111,8 +90,7 @@ export default function CustomerMaster() {
               placeholder="22AAAAA0000A1Z5"
             />
           </div>
-
-          <div>
+          <div className="col-span-12 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">PAN</label>
             <input
               name="pan"
@@ -123,8 +101,7 @@ export default function CustomerMaster() {
               placeholder="AAAAA0000A"
             />
           </div>
-
-          <div>
+          <div className="col-span-12 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">Credit Limit</label>
             <div className="relative mt-1">
               <FiCreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -133,7 +110,6 @@ export default function CustomerMaster() {
                 value={form.creditlimit}
                 onChange={handleChange}
                 type="number"
-                min="0"
                 className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-sky-400 outline-none bg-white shadow-sm text-sm"
                 placeholder="e.g., 500000"
               />
@@ -141,84 +117,55 @@ export default function CustomerMaster() {
           </div>
         </div>
 
-        {/* Address lines */}
-        <div>
-          <label className="text-xs font-medium text-slate-600">Street Address</label>
-          <div className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Row: Address Lines (6-6 split) */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-6">
+            <label className="text-xs font-medium text-slate-600">Address Line 1</label>
             <input
               name="line1"
               value={form.line1}
               onChange={handleChange}
               type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="Address line 1"
+              className={`${inputClass} px-3 py-2 mt-1`}
+              placeholder="Building / Street"
             />
+          </div>
+          <div className="col-span-12 md:col-span-6">
+            <label className="text-xs font-medium text-slate-600">Address Line 2</label>
             <input
               name="line2"
               value={form.line2}
               onChange={handleChange}
               type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="Address line 2 (optional)"
+              className={`${inputClass} px-3 py-2 mt-1`}
+              placeholder="Area / Landmark"
             />
           </div>
         </div>
 
-        {/* City / Pin / State */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
+        {/* Row: City, Pin, State, State Code (Split) */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-3">
             <label className="text-xs font-medium text-slate-600">City</label>
-            <input
-              name="city"
-              value={form.city}
-              onChange={handleChange}
-              type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="City"
-            />
+            <input name="city" value={form.city} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
-
-          <div>
+          <div className="col-span-12 md:col-span-3">
             <label className="text-xs font-medium text-slate-600">Pin Code</label>
-            <input
-              name="pincode"
-              value={form.pincode}
-              onChange={handleChange}
-              type="text"
-              inputMode="numeric"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="400001"
-            />
+            <input name="pincode" value={form.pincode} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
-
-          <div>
+          <div className="col-span-8 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">State</label>
-            <input
-              name="state"
-              value={form.state}
-              onChange={handleChange}
-              type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="State"
-            />
+            <input name="state" value={form.state} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
-
-          <div className="sm:col-start-2 sm:col-span-1">
+          <div className="col-span-4 md:col-span-2">
             <label className="text-xs font-medium text-slate-600">State Code</label>
-            <input
-              name="stateCode"
-              value={form.stateCode}
-              onChange={handleChange}
-              type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="27"
-            />
+            <input name="stateCode" value={form.stateCode} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
         </div>
 
-        {/* Contact details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
+        {/* Row: Email & Phone (6-6 split) */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-6">
             <label className="text-xs font-medium text-slate-600">Email</label>
             <div className="relative mt-1">
               <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -232,8 +179,7 @@ export default function CustomerMaster() {
               />
             </div>
           </div>
-
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label className="text-xs font-medium text-slate-600">Phone Number</label>
             <div className="relative mt-1">
               <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -243,53 +189,29 @@ export default function CustomerMaster() {
                 onChange={handleChange}
                 type="tel"
                 className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-sky-400 outline-none bg-white shadow-sm text-sm"
-                placeholder="+91-9876543210"
+                placeholder="+91-0000000000"
               />
             </div>
           </div>
         </div>
 
-        {/* Bank details */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
+        {/* Row: Bank Details (4-4-4 split) */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">Bank Name</label>
-            <input
-              name="bankName"
-              value={form.bankName}
-              onChange={handleChange}
-              type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="Bank name"
-            />
+            <input name="bankName" value={form.bankName} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
-
-          <div>
+          <div className="col-span-12 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">Account Number</label>
-            <input
-              name="accountNumber"
-              value={form.accountNumber}
-              onChange={handleChange}
-              type="text"
-              inputMode="numeric"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="Account number"
-            />
+            <input name="accountNumber" value={form.accountNumber} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
-
-          <div>
+          <div className="col-span-12 md:col-span-4">
             <label className="text-xs font-medium text-slate-600">IFSC Code</label>
-            <input
-              name="ifsc"
-              value={form.ifsc}
-              onChange={handleChange}
-              type="text"
-              className={`${inputClass} px-3 py-2`}
-              placeholder="IFSC (e.g., SBIN0000001)"
-            />
+            <input name="ifsc" value={form.ifsc} onChange={handleChange} type="text" className={`${inputClass} px-3 py-2 mt-1`} />
           </div>
         </div>
 
-        {/* Buttons - full width on mobile */}
+        {/* Buttons */}
         <div className="pt-3 border-t flex flex-col sm:flex-row gap-3">
           <button
             type="submit"
@@ -297,7 +219,6 @@ export default function CustomerMaster() {
           >
             <FiSave /> Save Customer
           </button>
-
           <button
             type="button"
             onClick={handleReset}

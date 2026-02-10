@@ -1,131 +1,139 @@
 import React, { useState } from 'react';
 import { 
-  FiPlus, FiSliders, FiCheck, FiX, FiShield, 
-  FiBriefcase, FiShoppingCart, FiBarChart, FiSettings, FiUser
+  FiPlus, FiCheck, FiShield, FiBriefcase, FiShoppingCart, 
+  FiBarChart, FiSettings, FiSearch, FiInfo, FiChevronRight 
 } from 'react-icons/fi';
 
-const AssignFunctionalityV3 = () => {
+const AssignFunctionalityV4 = () => {
   const [selectedRole, setSelectedRole] = useState("Accountant");
-  const [activeConfig, setActiveConfig] = useState(null); // To track which "Box" is open
-
-  // Structure: Only show main categories as cards
-  const modules = [
-    { id: 'masters', title: 'Masters', icon: <FiBriefcase />, color: 'bg-blue-600', count: 24 },
-    { id: 'purchase', title: 'Purchase', icon: <FiShoppingCart />, color: 'bg-purple-600', count: 3 },
-    { id: 'billing', title: 'Billing', icon: <FiCheck />, color: 'bg-emerald-600', count: 6 },
-    { id: 'reports', title: 'Reports', icon: <FiBarChart />, color: 'bg-orange-600', count: 12 },
-    { id: 'settings', title: 'Settings', icon: <FiSettings />, color: 'bg-rose-600', count: 8 },
-  ];
+  const [activeModule, setActiveModule] = useState('masters');
 
   const roles = ["Administrator", "Accountant", "Store Manager", "Salesman"];
 
+  const modules = [
+    { id: 'masters', title: 'Masters', icon: <FiBriefcase />, color: 'bg-blue-500' },
+    { id: 'purchase', title: 'Purchase', icon: <FiShoppingCart />, color: 'bg-purple-500' },
+    { id: 'billing', title: 'Billing', icon: <FiCheck />, color: 'bg-emerald-500' },
+    { id: 'reports', title: 'Reports', icon: <FiBarChart />, color: 'bg-orange-500' },
+    { id: 'settings', title: 'Settings', icon: <FiSettings />, color: 'bg-rose-500' },
+  ];
+
+  const currentModule = modules.find(m => m.id === activeModule);
+
   return (
-    <div className="min-h-screen bg-[#fdfdfd] p-6 lg:p-12 font-sans">
-      <div className="max-w-5xl mx-auto">
-        
-        {/* Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-          <div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Role Permissions.</h1>
-            <p className="text-slate-500 font-medium mt-1">Select a role and configure specific module access.</p>
+    <div className="min-h-screen bg-white font-sans text-slate-900">
+      {/* 1. TOP NAV - ROLE SELECTOR */}
+      <header className="h-20 border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 bg-white z-10">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white">
+            <FiShield size={20} />
           </div>
-          
-          {/* Role Pill Selector */}
-          <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
-            {roles.map(role => (
-              <button 
-                key={role}
-                onClick={() => setSelectedRole(role)}
-                className={`px-5 py-2 rounded-xl text-xs font-black transition-all ${selectedRole === role ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                {role}
-              </button>
-            ))}
-          </div>
+          <h1 className="text-xl font-black tracking-tight">Access Control</h1>
         </div>
 
-        {/* --- Card Grid --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {modules.map((mod) => (
-            <div 
-              key={mod.id}
-              className="group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer relative overflow-hidden"
-              onClick={() => setActiveConfig(mod)}
+        <div className="flex bg-slate-100 p-1 rounded-xl">
+          {roles.map(role => (
+            <button 
+              key={role}
+              onClick={() => setSelectedRole(role)}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                selectedRole === role ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+              }`}
             >
-              <div className={`${mod.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-200`}>
-                {mod.icon}
-              </div>
-              <h3 className="text-xl font-black text-slate-800 mb-2">{mod.title}</h3>
-              <p className="text-sm text-slate-400 font-medium">{mod.count} functions available</p>
-              
-              <div className="mt-8 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">Configure Access</span>
-                <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all">
-                  <FiPlus />
-                </div>
-              </div>
-            </div>
+              {role}
+            </button>
           ))}
         </div>
 
-        {/* --- THE OPTIONS BOX (Overlay/Modal) --- */}
-        {activeConfig && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setActiveConfig(null)} />
-            
-            {/* Options Box */}
-            <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-              <div className={`${activeConfig.color} p-8 text-white flex justify-between items-center`}>
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
-                    {activeConfig.icon}
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-black">{activeConfig.title} Settings</h2>
-                    <p className="text-xs font-bold opacity-80 uppercase tracking-widest">Applying to: {selectedRole}</p>
-                  </div>
-                </div>
-                <button onClick={() => setActiveConfig(null)} className="p-3 hover:bg-white/20 rounded-full transition-all">
-                  <FiX size={24} />
-                </button>
-              </div>
+        <button className="px-5 py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+          Save Layout
+        </button>
+      </header>
 
-              <div className="p-10 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                {/* Individual Permission Toggles */}
-                {['Create New Entries', 'Edit Existing Records', 'Delete Permission', 'Export to Excel', 'Bulk Upload'].map((option, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 bg-slate-50/50 hover:bg-white hover:border-blue-100 transition-all">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 shadow-sm border border-slate-100">
-                        <FiShield size={18} />
-                      </div>
-                      <span className="font-bold text-slate-700">{option}</span>
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* 2. LEFT RAIL - MODULES */}
+        <aside className="w-72 border-r border-slate-100 p-6 flex flex-col gap-2 overflow-y-auto">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 mb-2">Modules</p>
+          {modules.map((mod) => (
+            <button
+              key={mod.id}
+              onClick={() => setActiveModule(mod.id)}
+              className={`group flex items-center justify-between p-4 rounded-2xl transition-all ${
+                activeModule === mod.id ? 'bg-slate-50 border-slate-100' : 'hover:bg-slate-50/50'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white ${mod.color} shadow-lg shadow-slate-100`}>
+                  {mod.icon}
+                </div>
+                <span className={`font-bold text-sm ${activeModule === mod.id ? 'text-slate-900' : 'text-slate-500'}`}>
+                  {mod.title}
+                </span>
+              </div>
+              <FiChevronRight className={`${activeModule === mod.id ? 'text-slate-900' : 'text-slate-200'}`} />
+            </button>
+          ))}
+        </aside>
+
+        {/* 3. MAIN WORKSPACE - PERMISSIONS */}
+        <main className="flex-1 bg-slate-50/30 p-10 overflow-y-auto">
+          <div className="max-w-4xl mx-auto">
+            {/* Context Header */}
+            <div className="mb-10">
+              <div className="flex items-center gap-3 text-blue-600 mb-2">
+                <span className="p-2 bg-blue-50 rounded-lg">{currentModule.icon}</span>
+                <span className="text-xs font-black uppercase tracking-widest">{currentModule.title} Module</span>
+              </div>
+              <h2 className="text-3xl font-black text-slate-900">Configure Permissions</h2>
+              <p className="text-slate-500 font-medium">Define what an <span className="text-slate-900 underline decoration-blue-500">{selectedRole}</span> can do within this module.</p>
+            </div>
+
+            {/* Permission List */}
+            <div className="space-y-4">
+              {[
+                { title: 'Create Entries', desc: 'Allows the user to add new data rows.' },
+                { title: 'Full Edit Access', desc: 'Allows modifying existing master records.' },
+                { title: 'Delete Documents', desc: 'Permanent removal of records (High Risk).' },
+                { title: 'Export PDF/Excel', desc: 'Allows downloading of system data.' },
+                { title: 'System Logs', desc: 'View activity history for this module.' },
+              ].map((perm, i) => (
+                <div key={i} className="group bg-white border border-slate-100 p-6 rounded-[2rem] flex items-center justify-between hover:shadow-xl hover:shadow-slate-200/50 transition-all">
+                  <div className="flex items-center gap-6">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                      <FiPlus size={20} />
                     </div>
-                    
-                    {/* Switch Toggle */}
+                    <div>
+                      <h4 className="font-bold text-slate-800">{perm.title}</h4>
+                      <p className="text-xs text-slate-400 font-medium">{perm.desc}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                     {/* Dynamic Toggle */}
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked={i < 2} />
-                      <div className="w-14 h-8 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                      <div className="w-12 h-6 bg-slate-100 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-6"></div>
                     </label>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
+            </div>
 
-              <div className="p-8 border-t border-slate-50 flex gap-4">
-                <button 
-                  className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all shadow-xl shadow-slate-200"
-                  onClick={() => setActiveConfig(null)}
-                >
-                  Confirm Permissions
-                </button>
+            {/* Hint Box */}
+            <div className="mt-12 p-6 bg-slate-900 rounded-[2rem] flex items-center gap-6 text-white">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-blue-400">
+                <FiInfo size={24} />
+              </div>
+              <div>
+                <p className="font-bold text-sm">Inherited Permissions</p>
+                <p className="text-xs text-slate-400">Some settings might be locked if the {selectedRole} role inherits from a higher group.</p>
               </div>
             </div>
           </div>
-        )}
-
+        </main>
       </div>
     </div>
   );
 };
 
-export default AssignFunctionalityV3;
+export default AssignFunctionalityV4;

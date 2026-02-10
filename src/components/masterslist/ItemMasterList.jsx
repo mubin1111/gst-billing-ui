@@ -139,7 +139,7 @@ export default function EmployeeList() {
 
       {/* Header & Search */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-4 border-b">
-        <h1 className="text-3xl font-bold text-indigo-700">Employee List</h1>
+        <h1 className="text-3xl font-bold text-indigo-700">Item Master List</h1>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2 border w-full sm:w-80 shadow-inner">
             <Search className="text-slate-400 w-5 h-5" />
@@ -150,8 +150,8 @@ export default function EmployeeList() {
               className="bg-transparent outline-none text-sm w-full placeholder:text-slate-400"
             />
           </div>
-          <Link to="/employee-master" className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold shadow-md hover:bg-indigo-700 transition transform hover:scale-[1.02]">
-            <Plus className="w-4 h-4" /> Add Employee
+          <Link to="/item-master" className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold shadow-md hover:bg-indigo-700 transition transform hover:scale-[1.02]">
+            <Plus className="w-4 h-4" /> Add Item
           </Link>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiCheck, FiSave, FiLayers } from "react-icons/fi";
+import { FiZap, FiMousePointer, FiLayers } from "react-icons/fi";
 
 const STORAGE_KEY = "app-settings";
 
@@ -20,7 +20,7 @@ const PRESETS = [
     name: "Emerald Executive",
     themeColor: "#1d805f",
     navbarColor: "#064E3B",
-    drawerColor: "#F9FAFB",
+    drawerColor: "#e9f9f1",
     navbarUseGradient: true,
     navbarGradientStart: "#0c2c23",
     navbarGradientEnd: "#065F46",
@@ -31,7 +31,7 @@ const PRESETS = [
     name: "Royal Amethyst",
     themeColor: "#4700ee",
     navbarColor: "#2E1065",
-    drawerColor: "#FFFFFF",
+    drawerColor: "#ebe3e3",
     navbarUseGradient: true,
     navbarGradientStart: "#0e0223",
     navbarGradientEnd: "#4C1D95",
@@ -42,7 +42,7 @@ const PRESETS = [
     name: "Obsidian Rose",
     themeColor: "#E11D48",
     navbarColor: "#0F172A",
-    drawerColor: "#FFF1F2",
+    drawerColor: "#dfdede",
     navbarUseGradient: true,
     navbarGradientStart: "#0F172A",
     navbarGradientEnd: "#44403C",
@@ -64,7 +64,7 @@ const PRESETS = [
     name: "Sunset Peach",
     themeColor: "#71a600",
     navbarColor: "#4C1D95",
-    drawerColor: "#ffffff",
+    drawerColor: "#e0e9d9",
     navbarUseGradient: true,
     navbarGradientStart: "#0c011c",
     navbarGradientEnd: "#69c400",
@@ -74,126 +74,132 @@ const PRESETS = [
 
 export default function ThemeControls({ className }) {
   const [selectedPreset, setSelectedPreset] = useState(null);
-  const [savedKey, setSavedKey] = useState("");
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const s = JSON.parse(raw);
-      setSavedKey(s?.themeName || "midnight-cobalt");
-      const initial = PRESETS.find(p => p.key === s.themeName) || PRESETS[0];
-      setSelectedPreset(initial);
-    } else {
-      setSavedKey("midnight-cobalt");
-      setSelectedPreset(PRESETS[0]);
-    }
+    const initialKey = raw ? JSON.parse(raw).themeName : "midnight-cobalt";
+    const initialTheme = PRESETS.find(p => p.key === initialKey) || PRESETS[0];
+    setSelectedPreset(initialTheme);
   }, []);
 
-  const broadcastTheme = (p) => {
-    const payload = { ...p, themeName: p.key };
-    window.dispatchEvent(new CustomEvent("app-theme-updated", { detail: payload }));
-  };
-
-  const handlePreview = (p) => {
+  // Combined logic: Change, Save, and Broadcast all at once
+  const handleThemeSelect = (p) => {
+    // 1. Update UI state
     setSelectedPreset(p);
-    broadcastTheme(p);
+    
+    // 2. Save to LocalStorage immediately
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...p, themeName: p.key }));
+    
+    // 3. Broadcast to other components
+    window.dispatchEvent(new CustomEvent("app-theme-updated", { 
+      detail: { ...p, themeName: p.key } 
+    }));
   };
 
-  const handleSave = () => {
-    if (!selectedPreset) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...selectedPreset, themeName: selectedPreset.key }));
-    setSavedKey(selectedPreset.key);
-  };
-
-  const handleReset = () => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    let themeToRestore = PRESETS[0];
-    if (raw) {
-      const s = JSON.parse(raw);
-      themeToRestore = PRESETS.find(p => p.key === s.themeName) || PRESETS[0];
-    }
-    setSelectedPreset(themeToRestore);
-    broadcastTheme(themeToRestore);
-  };
+  if (!selectedPreset) return null;
 
   return (
-    <div className={`${className} max-w-5xl mx-auto p-4`}>
-      <div className="bg-white rounded-[2rem] border border-slate-200 shadow-2xl overflow-hidden">
+    <div className={`min-h-[550px] bg-white rounded-3xl overflow-hidden flex flex-col lg:flex-row border border-slate-100 shadow-2xl ${className}`}>
 
-        {/* Header Block */}
-        <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <h3 className="text-2xl font-black text-slate-900 flex items-center gap-2 justify-center md:justify-start">
-              <FiLayers className="text-blue-600" /> Interface Style
-            </h3>
-            <p className="text-slate-500 text-sm font-medium mt-1">Select a high-performance theme for your dashboard.</p>
+      {/* LEFT: SELECTION PANEL */}
+      <div className="w-full lg:w-[380px] border-r border-slate-100 flex flex-col bg-slate-50/50">
+        <div className="p-8 pb-6">
+          <div className="flex items-center gap-2 mb-1">
+            <FiLayers className="text-blue-600" />
+            <h2 className="text-xl font-black tracking-tighter text-slate-900">Theme's </h2>
           </div>
+          <p className="text-slate-500 text-xs font-medium italic">Changes are applied instantly.</p>
+        </div>
 
-          <div className="flex gap-3">
-            <button onClick={handleReset} className="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">
-              Discard
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={selectedPreset?.key === savedKey}
-              className={`flex items-center gap-2 px-8 py-2.5 rounded-xl font-black text-sm transition-all ${selectedPreset?.key === savedKey
-                  ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-95"
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          {PRESETS.map((p) => {
+            const isActive = selectedPreset?.key === p.key;
+
+            return (
+              <button
+                key={p.key}
+                onClick={() => handleThemeSelect(p)}
+                className={`w-full group flex items-center gap-3 p-4 rounded-2xl transition-all ${
+                  isActive
+                    ? "bg-white shadow-md ring-1 ring-slate-200"
+                    : "hover:bg-white/60 text-slate-500"
                 }`}
-            >
-              <FiSave /> Save Changes
-            </button>
-          </div>
-        </div>
-
-        {/* Content Grid */}
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {PRESETS.map((p) => {
-              const isSelected = selectedPreset?.key === p.key;
-              return (
-                <button
-                  key={p.key}
-                  onClick={() => handlePreview(p)}
-                  className={`group relative flex flex-col p-2 rounded-[1.8rem] transition-all duration-300 ${isSelected ? "ring-4 ring-blue-500/20 translate-y-[-4px]" : "hover:bg-slate-50"
-                    }`}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl shrink-0 shadow-inner flex items-center justify-center text-white"
+                  style={{ background: p.navbarUseGradient ? `linear-gradient(135deg, ${p.navbarGradientStart}, ${p.navbarGradientEnd})` : p.navbarColor }}
                 >
-                  {/* Visual Preview */}
-                  <div className={`w-full h-40 rounded-[1.5rem] overflow-hidden border-2 transition-all ${isSelected ? "border-blue-500 shadow-xl" : "border-slate-100"
-                    }`}>
-                    <div className="h-full flex flex-col">
-                      <div className="h-1/3 flex items-center px-4" style={{ background: p.navbarUseGradient ? `linear-gradient(90deg, ${p.navbarGradientStart}, ${p.navbarGradientEnd})` : p.navbarColor }}>
-                        <div className="w-10 h-2 bg-white/20 rounded-full" />
-                      </div>
-                      <div className="flex flex-1">
-                        <div className="w-1/4 h-full border-r border-slate-100 p-2" style={{ background: p.drawerColor }}>
-                          <div className="w-full h-1 bg-slate-200 rounded-full mb-1" />
-                          <div className="w-2/3 h-1 bg-slate-200 rounded-full" />
-                        </div>
-                        <div className="flex-1 bg-white p-4 flex flex-col justify-between">
-                          <div className="space-y-1">
-                            <div className="w-full h-1.5 bg-slate-100 rounded-full" />
-                            <div className="w-1/2 h-1.5 bg-slate-100 rounded-full" />
-                          </div>
-                          <div className="w-12 h-6 rounded-md shadow-sm self-end" style={{ background: p.themeColor }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {isActive ? <FiZap size={14} className="text-white" /> : <div className="w-1.5 h-1.5 bg-white/40 rounded-full" />}
+                </div>
 
-                  {/* Text Label */}
-                  <div className="mt-4 px-2 flex justify-between items-center">
-                    <div>
-                      <span className="block font-black text-slate-800 tracking-tight">{p.name}</span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{p.note}</span>
-                    </div>
-                    {isSelected && <div className="bg-blue-500 text-white p-1 rounded-full"><FiCheck size={14} /></div>}
-                  </div>
-                </button>
-              );
-            })}
+                <div className="flex-1 text-left">
+                  <p className={`font-bold text-sm ${isActive ? "text-slate-900" : "text-slate-500"}`}>
+                    {p.name}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">{p.note}</p>
+                </div>
+
+                {isActive && <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* RIGHT: LIVE STUDIO PREVIEW */}
+      <div className="flex-1 bg-white p-8 lg:p-12 flex flex-col items-center justify-center relative">
+        <div className="absolute top-8 left-8 flex items-center gap-2 text-slate-300 font-bold text-[10px] uppercase tracking-[0.2em]">
+          <FiMousePointer /> Live Canvas
+        </div>
+
+        <div className="w-full max-w-2xl aspect-video rounded-3xl shadow-[0_30px_70px_-20px_rgba(0,0,0,0.12)] overflow-hidden border border-slate-100 flex flex-col bg-white">
+          {/* Mock Nav */}
+          <div
+            className="h-10 px-5 flex items-center justify-between"
+            style={{
+              background: selectedPreset.navbarUseGradient
+                ? `linear-gradient(90deg, ${selectedPreset.navbarGradientStart}, ${selectedPreset.navbarGradientEnd})`
+                : selectedPreset.navbarColor
+            }}
+          >
+            <div className="w-16 h-2 bg-white/20 rounded-full" />
+            <div className="w-5 h-5 rounded-full bg-white/10" />
+          </div>
+
+          <div className="flex-1 flex">
+            {/* Mock Sidebar */}
+            <div
+              className="w-24 border-r border-slate-50 p-4 space-y-3"
+              style={{ background: selectedPreset.drawerColor }}
+            >
+              <div className="w-full h-1.5 bg-slate-100 rounded-full" />
+              <div className="w-3/4 h-1.5 bg-slate-100 rounded-full" />
+            </div>
+
+            {/* Mock Content */}
+            <div className="flex-1 p-6 space-y-4">
+              <div className="w-1/3 h-4 bg-slate-50 rounded-md mb-6" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="h-20 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 flex items-center justify-center" >
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm" />
+                </div>
+                <div className="h-20 bg-slate-50/50 rounded-xl border border-dashed border-slate-200" />
+              </div>
+              <div className="flex justify-end pt-4">
+                <div
+                  className="px-5 py-2 rounded-lg text-white text-[9px] font-black shadow-lg transition-colors duration-500"
+                  style={{ background: selectedPreset.themeColor }}
+                >
+                  Theme Applied
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="mt-8 text-[10px] font-bold uppercase text-slate-300 tracking-tighter">
+          Active Environment: {selectedPreset.name}
+        </p>
       </div>
     </div>
   );

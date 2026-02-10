@@ -1,12 +1,11 @@
 import React, { useState } from 'react'; // Added useState
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  AreaChart, Area, PieChart, Pie, Cell 
+  AreaChart, Area, PieChart, Pie, Cell ,
 } from 'recharts';
 import { 
   FiTrendingUp, FiBox, FiUsers, FiFileText, 
-  FiArrowUpRight, FiArrowDownRight, FiActivity,
-  FiBarChart2, FiGlobe // Added icons for the toggle
+  FiArrowUpRight, FiArrowDownRight,FiPieChart,
 } from 'react-icons/fi';
 
 /* --- Mock Data for Charts --- */
@@ -60,93 +59,97 @@ const FullReportView = () => {
         </div>
 
         {/* --- Charts Row --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Main Sales Trend Card */}
-          <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-black text-slate-800 uppercase tracking-widest text-sm flex items-center gap-2">
-                <FiActivity className="text-blue-600" /> Revenue vs Tax Trend
-              </h3>
+       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  
+  {/* Main Analytics Card (Now Pie Chart) */}
+  <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+    <div className="flex items-center justify-between mb-8">
+      <h3 className="font-black text-slate-800 uppercase tracking-widest text-sm flex items-center gap-2">
+        <FiPieChart className="text-blue-600" /> Revenue Segmentation
+      </h3>
 
-              {/* 2. Toggle Buttons */}
-              <div className="flex bg-slate-100 p-1 rounded-xl">
-                <button 
-                  onClick={() => setViewMode('wave')}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'wave' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                >
-                  <FiGlobe size={14} /> Wave
-                </button>
-                <button 
-                  onClick={() => setViewMode('bars')}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'bars' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                >
-                  <FiBarChart2 size={14} /> Bars
-                </button>
-              </div>
-            </div>
+      {/* Toggle between Donut and Solid */}
+      <div className="flex bg-slate-100 p-1 rounded-xl">
+        <button 
+          onClick={() => setViewMode('wave')} // Using your existing state 'wave' for Donut
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'wave' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          Donut
+        </button>
+        <button 
+          onClick={() => setViewMode('bars')} // Using your existing state 'bars' for Solid
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'bars' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          Solid
+        </button>
+      </div>
+    </div>
 
-            <div className="h-[350px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                {/* 3. Conditional Rendering based on viewMode */}
-                {viewMode === 'wave' ? (
-                  <AreaChart data={salesData}>
-                    <defs>
-                      <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12}} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12}} />
-                    <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}} />
-                    <Area type="monotone" dataKey="sales" stroke="#3B82F6" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
-                    <Area type="monotone" dataKey="tax" stroke="#8B5CF6" strokeWidth={3} fill="none" />
-                  </AreaChart>
-                ) : (
-                  <BarChart data={salesData} barGap={8}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12}} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12}} />
-                    <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}} />
-                    <Bar dataKey="sales" fill="#3B82F6" radius={[6, 6, 0, 0]} barSize={35} />
-                    <Bar dataKey="tax" fill="#8B5CF6" radius={[6, 6, 0, 0]} barSize={35} />
-                  </BarChart>
-                )}
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Distribution Pie */}
-          <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col">
-            <h3 className="font-black text-slate-800 uppercase tracking-widest text-sm mb-8">Sales by Category</h3>
-            <div className="flex-1">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie data={categoryData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="space-y-3 mt-4">
-                {categoryData.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{backgroundColor: COLORS[idx]}}></div>
-                      <span className="text-sm font-bold text-slate-600">{item.name}</span>
-                    </div>
-                    <span className="text-sm font-black text-slate-900">{item.value}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+    <div className="h-[350px] w-full relative">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={salesData}
+            cx="50%"
+            cy="50%"
+            innerRadius={viewMode === 'wave' ? 90 : 0} // Donut if 'wave' is selected
+            outerRadius={130}
+            paddingAngle={5}
+            dataKey="sales"
+            stroke="none"
+          >
+            {salesData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip 
+            contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'}} 
+          />
+        </PieChart>
+      </ResponsiveContainer>
+      
+      {/* Optional: Center Text for Donut Mode */}
+      {viewMode === 'wave' && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Revenue</p>
+          <p className="text-2xl font-black text-slate-800">
+            ${salesData.reduce((acc, curr) => acc + curr.sales, 0).toLocaleString()}
+          </p>
         </div>
+      )}
+    </div>
+  </div>
+
+  {/* Distribution Pie (Small Sidebar Chart) */}
+  <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col">
+    <h3 className="font-black text-slate-800 uppercase tracking-widest text-sm mb-8">Sales by Category</h3>
+    <div className="flex-1">
+      <ResponsiveContainer width="100%" height={200}>
+        <PieChart>
+          <Pie data={categoryData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+            {categoryData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
+      
+      <div className="space-y-3 mt-6">
+        {categoryData.map((item, idx) => (
+          <div key={idx} className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition-colors">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full" style={{backgroundColor: COLORS[idx]}}></div>
+              <span className="text-xs font-bold text-slate-600">{item.name}</span>
+            </div>
+            <span className="text-xs font-black text-slate-900">{item.value}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+</div>
 
         {/* --- Detailed Information Table --- */}
         <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
