@@ -19,8 +19,8 @@ export default function AssetPurchaseReport() {
   /* ---------------- STATE & FILTERS ---------------- */
   const initialFilters = {
     unit: "Company Name",
-    fromDate: getTodayDate(), 
-    toDate: getTodayDate(),   
+    fromDate: getTodayDate(),
+    toDate: getTodayDate(),
     supplier: "All",
     category: "All",
   };
@@ -50,11 +50,11 @@ export default function AssetPurchaseReport() {
     return rawData.filter((item) => {
       const matchSupplier = filters.supplier === "All" || item.supplier === filters.supplier;
       const matchCategory = filters.category === "All" || item.category === filters.category;
-      
+
       const itemDate = new Date(item.purchaseDate);
       const matchDate = itemDate >= filters.fromDate && itemDate <= filters.toDate;
 
-      return matchSupplier && matchCategory; 
+      return matchSupplier && matchCategory;
     });
   }, [filters, rawData]);
 
@@ -80,13 +80,13 @@ export default function AssetPurchaseReport() {
       {/* HEADER */}
       <div className="w-full bg-white border-b border-black px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-           <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest mt-0.5">
+          <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest mt-0.5">
             {filters.unit}
           </p>
           <h1 className="text-xl md:text-2xl font-black tracking-tight text-slate-900 uppercase">
             Asset Purchase <span className="text-blue-600">Report</span>
           </h1>
-         
+
         </div>
       </div>
 
@@ -95,7 +95,7 @@ export default function AssetPurchaseReport() {
         <div className="bg-white overflow-hidden">
           <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
-              
+
               <div className="flex flex-col space-y-2">
                 <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Supplier</label>
                 <select value={filters.supplier} onChange={(e) => setFilters({ ...filters, supplier: e.target.value })} className={inputStyles}>

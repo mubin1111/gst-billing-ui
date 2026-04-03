@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Save, Printer, Mail, Send, Truck, XCircle, Plus, Trash2, MapPin, FileText, Hash, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
+import { Save, Printer, Mail, Send, Truck, XCircle, Plus,MapPin, FileText, Hash, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 

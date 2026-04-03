@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Save, Printer, Mail, Send, Truck, XCircle, Plus, Trash2, MapPin, FileText, Hash, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
+import { Save, Printer, Mail, Send, Truck, XCircle, Plus, MapPin, FileText, Hash, User, CreditCard, Landmark, ChevronDown } from 'lucide-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 const BillingV2 = () => {
@@ -26,7 +26,6 @@ const BillingV2 = () => {
 
 
     // Amount In Words
-
     const numberToWords = (num) => {
         const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
         const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];

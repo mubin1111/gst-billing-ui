@@ -24,6 +24,7 @@ const BillingV1 = () => {
     lineTotal: 0
   });
 
+
   // Amount In Words
 
   const numberToWords = (num) => {
@@ -111,7 +112,20 @@ const BillingV1 = () => {
     setItems(calculateTotals(updatedItems));
   };
 
-  const addNewRow = () => setItems([...items, createEmptyRow()]);
+  // const addNewRow = () => setItems([...items, createEmptyRow()]);
+  const addNewRow = () => {
+    // 1. Grab the last item in the list
+    const lastItem = items[items.length - 1];
+
+    // 2. Check if the list is empty OR if the last item has the required data
+    // I've selected itemName and qty as "required", but you can add more.
+    if (items.length > 0 && (!lastItem.itemName || lastItem.qty <= 0)) {
+      alert("Please fill out the current row before adding a new one!");
+      return; // Exit the function early
+    }
+    // 3. If validation passes, add the row
+    setItems([...items, createEmptyRow()]);
+  };
   const removeRow = (id) => { if (items.length > 1) setItems(calculateTotals(items.filter(item => item.id !== id))); };
   const handleKeyDown = (e, index) => { if (e.key === 'Tab' && !e.shiftKey && index === items.length - 1) addNewRow(); };
 
@@ -617,18 +631,42 @@ const BillingV1 = () => {
               </div>
             </div>
 
-            <div className="relative group overflow-hidden rounded-xl">
-              <div className="flex items-center gap-3 bg-slate-900 p-3 border border-slate-800 group-hover:border-indigo-500 transition-all cursor-pointer">
-                {/* ICON BOX - Now using a soft blue theme */}
-                <div className="bg-blue-50 p-2.5 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm border border-blue-100/50">
-                  <Landmark size={18} />
+            <div className="relative group overflow-hidden rounded-xl bg-blue-900 border border-slate-800 hover:border-violet-500/50 transition-all duration-300">
+              <div className="flex items-center gap-4 p-4 cursor-pointer">
+                {/* Icon Container */}
+                <div className="bg-violet-500/10 p-3 rounded-lg text-slate-100 group-hover:bg-violet-500 group-hover:text-white transition-all duration-300">
+                  <Landmark size={20} />
                 </div>
+
                 <div className="flex-1">
-                  <span className="text-slate-500 font-black uppercase text-[8px] tracking-[0.2em] block leading-none mb-1">Due Date (Deadline)</span>
-                  <input type="date" className="w-full bg-transparent border-none p-0 focus:ring-0 font-white text-white text-[12px] cursor-pointer color-scheme-dark invert-[0.8]" defaultValue={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]} />
+                  <label className="text-slate-100 font-bold uppercase text-[9px] tracking-widest block mb-1.5 ml-1">
+                    Deadline
+                  </label>
+                  <div className="relative">
+                    {/* Visual Icon */}
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-20">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-500">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
+
+                    <DatePicker
+                      selected={invoiceDate}
+                      onChange={(date) => setInvoiceDate(date)}
+                      dateFormat="dd MMM yyyy"
+                      popperPlacement="bottom-start"
+                      portalId="root-portal" // Prevents the calendar from being hidden by parent divs
+                      className="w-full bg-white border border-slate-200 rounded-lg py-2 pl-9 pr-4 text-slate-700 font-semibold text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none h-[40px]"
+                      calendarClassName="shadow-2xl border-0 rounded-xl"
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-indigo-500 group-hover:w-full transition-all duration-300"></div>
+              {/* Animated Glow Bottom Bar */}
+              {/* <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-violet-600 to-fuchsia-500 group-hover:w-full transition-all duration-500"></div> */}
             </div>
           </div>
         </div>

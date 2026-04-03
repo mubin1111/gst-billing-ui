@@ -121,8 +121,6 @@ export default function BankMaster() {
               />
             </div>
 
-             
-
             <div>
               <label className="text-xs font-medium text-slate-600">
                 Account Holder Name *
